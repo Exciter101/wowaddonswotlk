@@ -1,0 +1,9 @@
+## Interface: 30400
+## Title: Mark Me
+## Notes: Simple Marking bar
+## Author: Solloway
+## Dependencies:
+## Version: 1.0.0
+## SavedVariablesPerCharacter: MMSettings
+## SavedVariables: MMGLOBALS
+MarkMe.lua

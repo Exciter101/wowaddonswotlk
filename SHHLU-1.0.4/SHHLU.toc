@@ -1,0 +1,16 @@
+## Interface: 90205
+## Version: 1.0.4
+## Title:|cffffffffSonic The Hedgehog|r Level Up!
+## Author: DonnieDice
+## Notes: Grats!
+## X-Category: UI Media, Questing & Leveling, Audio & Video, Miscellaneous
+## X-Website: https://github.com/donniedice/SHHLU
+## X-Curse-Project-ID: 594158
+## X-Wago-ID: 2jK8BxNy
+## X-WoWI-ID: 26263
+## X-Tukui-ProjectID: 44
+## X-Tukui-ProjectFolders: SHHLU-1.0.4
+
+
+main.lua
+
