@@ -40,7 +40,7 @@ function Auctionator.CraftingInfo.DoTradeSkillReagentsSearch()
   end
 end
 
-function Auctionator.CraftingInfo.GetSkillReagentsTotal()
+local function GetSkillReagentsTotal()
   local recipeIndex = GetTradeSkillSelectionIndex()
 
   local total = 0
@@ -49,15 +49,10 @@ function Auctionator.CraftingInfo.GetSkillReagentsTotal()
     local multiplier = select(3, GetTradeSkillReagentInfo(recipeIndex, reagentIndex))
     local link = GetTradeSkillReagentItemLink(recipeIndex, reagentIndex)
     if link ~= nil then
-      local unitPrice
-
       local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemLink(AUCTIONATOR_L_REAGENT_SEARCH, link)
       local auctionPrice = Auctionator.API.v1.GetAuctionPriceByItemLink(AUCTIONATOR_L_REAGENT_SEARCH, link)
-      if vendorPrice ~= nil and auctionPrice ~= nil then
-        unitPrice = math.min(vendorPrice, auctionPrice)
-      else
-        unitPrice = vendorPrice or auctionPrice
-      end
+
+      local unitPrice = vendorPrice or auctionPrice
 
       if unitPrice ~= nil then
         total = total + multiplier * unitPrice
@@ -68,7 +63,7 @@ function Auctionator.CraftingInfo.GetSkillReagentsTotal()
   return total
 end
 
-function Auctionator.CraftingInfo.GetAHProfit()
+local function GetAHProfit()
   local recipeIndex = GetTradeSkillSelectionIndex()
   local recipeLink =  GetTradeSkillItemLink(recipeIndex)
   local count = GetTradeSkillNumMade(recipeIndex)
@@ -81,7 +76,50 @@ function Auctionator.CraftingInfo.GetAHProfit()
   if currentAH == nil then
     currentAH = 0
   end
-  local toCraft = Auctionator.CraftingInfo.GetSkillReagentsTotal()
+  local toCraft = GetSkillReagentsTotal()
 
   return math.floor(currentAH * count * Auctionator.Constants.AfterAHCut - toCraft)
+end
+
+local function CraftCostString()
+  local price = WHITE_FONT_COLOR:WrapTextInColorCode(GetMoneyString(GetSkillReagentsTotal(), true))
+
+  return AUCTIONATOR_L_TO_CRAFT_COLON .. " " .. price
+end
+
+local function ProfitString(profit)
+  local price
+  if profit >= 0 then
+    price = WHITE_FONT_COLOR:WrapTextInColorCode(GetMoneyString(profit, true))
+  else
+    price = RED_FONT_COLOR:WrapTextInColorCode("-" .. GetMoneyString(-profit, true))
+  end
+
+  return AUCTIONATOR_L_PROFIT_COLON .. " " .. price
+
+end
+
+function Auctionator.CraftingInfo.GetInfoText()
+  local result = ""
+  local lines = 0
+  if Auctionator.Config.Get(Auctionator.Config.Options.CRAFTING_INFO_SHOW_COST) then
+    if lines > 0 then
+      result = result .. "\n"
+    end
+    result = result .. CraftCostString()
+    lines = lines + 1
+  end
+
+  if Auctionator.Config.Get(Auctionator.Config.Options.CRAFTING_INFO_SHOW_PROFIT) then
+    local profit = GetAHProfit()
+
+    if profit ~= nil then
+      if lines > 0 then
+        result = result .. "\n"
+      end
+      result = result .. ProfitString(profit)
+      lines = lines + 1
+    end
+  end
+  return result, lines
 end

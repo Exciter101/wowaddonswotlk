@@ -1,8 +1,9 @@
 # AddOnSkins
 
-## [4.60-28-gff4c2d7](https://github.com/Azilroka/AddOnSkins/tree/ff4c2d75f4d4133c24ebfe884fc8d8577e099ac8) (2022-11-27)
-[Full Changelog](https://github.com/Azilroka/AddOnSkins/compare/4.60...ff4c2d75f4d4133c24ebfe884fc8d8577e099ac8) [Previous Releases](https://github.com/Azilroka/AddOnSkins/releases)
+## [4.61](https://github.com/Azilroka/AddOnSkins/tree/4.61) (2022-11-28)
+[Full Changelog](https://github.com/Azilroka/AddOnSkins/compare/4.60...4.61) [Previous Releases](https://github.com/Azilroka/AddOnSkins/releases)
 
+- 4.61  
 - Remove this stuff from DBM Skin  
 - Skin update (#93)  
     * Update Guild\_Roster\_Manager.lua  
