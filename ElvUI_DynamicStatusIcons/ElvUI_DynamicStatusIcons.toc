@@ -1,0 +1,18 @@
+## Interface: 100000
+## Title: |cff1784d1ElvUI|r |cff9482c9Dynamic Status Icons|r
+## Author: Repooc, Releaf
+## Version: 1.11
+## Notes: Plugin-edit for |cff1784d1ElvUI|r adding additional resting icons.
+## RequiredDeps: ElvUI
+## DefaultState: Enabled
+## X-Curse-Project-ID: 492330
+## X-Wago-ID: 2jK8oq6y
+
+Libraries\Load_Libraries.xml
+Init.lua
+Settings\Global.lua
+Settings\Profile.lua
+UnitFrames\Elements\DynamicStatusIcons.lua
+Options\Load_Options.xml
+customicons.lua
+iconlist.lua

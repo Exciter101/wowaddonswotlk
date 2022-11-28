@@ -1,0 +1,4 @@
+v1.04 11/2/2022
+
+• toc bump for 10.0
+• fix for additional bars for retail
