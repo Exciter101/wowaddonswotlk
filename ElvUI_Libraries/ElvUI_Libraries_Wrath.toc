@@ -3,6 +3,7 @@
 ## Author: Elv, Simpy
 ## Version: 1.00
 ## Interface: 30400
+## OptionalDeps: LibHealComm-4.0
 ## X-oUF: ElvUF
 ## X-Tukui-ProjectID: -2
 ## X-Tukui-ProjectFolders: ElvUI, ElvUI_Libraries, ElvUI_Options
