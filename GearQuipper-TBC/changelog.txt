@@ -1,3 +1,7 @@
+Version 48 (22-12-05):
+- Fixed an error with item comparison tooltips on ammunition
+- Fixed issues with repositioning of MailFrame, CraftFrame and TradeSkillFrame
+
 Version 47 (22-11-19):
 - Improvements for set swiches with regard to unique gems
 - Added some translations for spanish (esES), now 24% complete

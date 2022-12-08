@@ -1728,7 +1728,16 @@ function c:ExtractArguments(msg)
 end
 
 function c:IsNumeric(value)
-    return value and value == tostring(tonumber(value));
+    if not value then
+        return false;
+    end
+    local t = type(value);
+    if t == "number" then
+        return true;
+    elseif t ~= "string" then
+        return false;
+    end
+    return value == tostring(tonumber(value));
 end
 
 function c:MathRound(x, decimals)

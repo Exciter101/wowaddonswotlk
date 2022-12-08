@@ -7,7 +7,7 @@ GQ_OPTIONS = GQ_OPTIONS or {};
 GQ_DATA = GQ_DATA or {};
 GQ_AUX = GQ_AUX or {};
 
-local GQ_VERSION = 47;
+local GQ_VERSION = 48;
 
 c.VALUE_NONE = "VALUE_NONE";
 c.KEYWORD_NONE = "$NONE";

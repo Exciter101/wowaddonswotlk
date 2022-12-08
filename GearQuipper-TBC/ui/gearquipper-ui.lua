@@ -6,6 +6,9 @@ local gqTooltips = {};
 local slotStateBoxes;
 local secureActionButtons = {};
 
+local blizzardFrameNames = {"CraftFrame", "TradeSkillFrame", "BankFrame", "SpellBookFrame", "PlayerTalentFrame",
+                            "MailFrame"};
+
 local ECS_FrameName = "ECS_StatsFrame";
 local DCS_FrameName = "DejaClassicStatsFrame";
 local ElvUI_WACS_FrameName = "WrathArmory_StatsPane";
@@ -218,26 +221,90 @@ function c:ToggleWatermark(value)
 end
 
 function c:HookBlizzardFrameScripts()
-    -- hook blizzard frame scripts for side-by-side display
-    local otherFrameNames, newFrameHasBeenHooked = {"CraftFrame", "TradeSkillFrame", "BankFrame", "SpellBookFrame",
-                                                    "PlayerTalentFrame"};
-
-    for _, frameName in ipairs(otherFrameNames) do
+    local newFrameHasBeenHooked;
+    for _, frameName in ipairs(blizzardFrameNames) do
         local frame = _G[frameName];
         if frame and not c.isFrameHooked[frameName] then
-            frame:HookScript("OnShow", function(self)
+            frame:HookScript("OnShow", function()
                 c:SetFramePositions();
             end);
-            frame:HookScript("OnHide", function(self)
+            frame:HookScript("OnHide", function()
                 c:SetFramePositions();
             end);
             c.isFrameHooked[frameName] = true;
             newFrameHasBeenHooked = true;
         end
     end
-
     if newFrameHasBeenHooked then
         c:SetFramePositions();
+    end
+end
+local a = 1;
+function c:SetFramePositions(norepeat)
+    local xOffset = 0;
+
+    -- mail
+    local mailFrame = _G["MailFrame"];
+    if mailFrame and mailFrame:IsVisible() then
+        xOffset = xOffset + mailFrame:GetWidth();
+    end
+
+    -- spellbook
+    local spellbookFrame = _G["SpellBookFrame"];
+    if spellbookFrame and spellbookFrame:IsVisible() then
+        xOffset = xOffset + spellbookFrame:GetWidth();
+    end
+
+    -- character
+    local characterFrame = _G["CharacterFrame"];
+    if characterFrame and characterFrame:IsVisible() then
+        xOffset = xOffset + characterFrame:GetWidth() - 15;
+    end
+
+    -- GQ
+    if GqUiFrame:IsVisible() then
+        xOffset = xOffset + GqUiFrame:GetWidth() - 20;
+    end
+
+    -- extended character stats (addon)
+    local ecsFrame = _G[c:GetCharacterStatsFrameNames()[1]];
+    if ecsFrame and ecsFrame:IsVisible() then
+        xOffset = xOffset + ecsFrame:GetWidth();
+    end
+
+    -- elvui wrath armory (addon)
+    local elvUiWaFrame = _G[c:GetCharacterStatsFrameNames()[3]];
+    if elvUiWaFrame and elvUiWaFrame:IsVisible() then
+        xOffset = xOffset + elvUiWaFrame:GetWidth();
+    end
+
+    -- crafting
+    local craftFrame, tradeSkillFrame = _G["CraftFrame"], _G["TradeSkillFrame"];
+    if craftFrame and craftFrame:IsVisible() then
+        craftFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xOffset, -104);
+        xOffset = xOffset + craftFrame:GetWidth() - 20;
+    elseif tradeSkillFrame and tradeSkillFrame:IsVisible() and tradeSkillFrame:GetLeft() > characterFrame:GetLeft() then
+        tradeSkillFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xOffset, -104);
+        xOffset = xOffset + tradeSkillFrame:GetWidth() - 20;
+    end
+
+    -- bank
+    local bankFrame = _G["BankFrame"];
+    if bankFrame and bankFrame:IsVisible() then
+        bankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xOffset, -104);
+    end
+
+    -- talents
+    local talentFrame = _G["PlayerTalentFrame"];
+    if talentFrame and talentFrame:IsVisible() then
+        talentFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xOffset, -104);
+    end
+
+    -- tradeskillframe and craftingframe seem to do some async server requests which cause repositioning to fail at first try
+    if not norepeat then
+        C_Timer.After(0.001, function()
+            c:SetFramePositions(true);
+        end);
     end
 end
 
@@ -389,6 +456,10 @@ function c:ShowSetItemComparison(itemLink, setName, gameTooltipOwner)
             end
 
             if not c:IsEmpty(setItemLink) then
+                if c:IsNumeric(setItemLink) then
+                    -- ammo workaround
+                    setItemLink = c:GetItemLink(setItemLink);
+                end
                 tt:SetHyperlink(setItemLink);
             else
                 tt:AddLine(c:GetText("Empty slot"));
