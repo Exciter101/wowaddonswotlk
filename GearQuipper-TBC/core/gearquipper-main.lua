@@ -13,8 +13,6 @@ local lastGearAndBagsCache;
 
 local timeoutHighlightButtons = 1;
 
-local BANKCONTAINER_BAGID_OFFSET = 47;
-
 local BLIZZARD_UI_ADDONS = {"Blizzard_AchievementUI", "Blizzard_TalentUI", "Blizzard_TradeSkillUI"};
 
 local QUEUE_CAUSE_COMBAT = "combat";
@@ -1299,9 +1297,9 @@ end
 
 function c:PutInBag(bagSpaceCache, itemString)
     if itemString then
-        local lastBagId = c:LoadLastBagLocation(itemString);
+        local lastBagId, lastSlotId = c:LoadLastBagLocation(itemString);
         if lastBagId and bagSpaceCache[lastBagId] and bagSpaceCache[lastBagId] > 0 and
-            c:PutInBackpack(bagSpaceCache, lastBagId) then
+            c:PutInBackpack(bagSpaceCache, lastBagId, lastSlotId) then
             return true;
         end
     end
@@ -1319,7 +1317,7 @@ function c:PutInBag(bagSpaceCache, itemString)
     end
 end
 
-function c:PutInBackpack(bagSpaceCache, bagId)
+function c:PutInBackpack(bagSpaceCache, bagId, slotId)
     if CursorHasItem() then
         if bagId == 0 then
             PutItemInBackpack();
@@ -1407,6 +1405,8 @@ function c:PushSetToBank(setName)
             if error then
                 c:Println(c:GetText("Set \"%s\" was incompletely pushed to bank.", setName));
             end
+
+            ClearCursor();
             return not error;
         else
             c:Println(c:GetText("Not enough bank space to push \"%s\" to bank. Free: %s, needed: %s.", setName,
@@ -1440,6 +1440,8 @@ function c:PullSetFromBank(setName)
             if error then
                 c:Println(c:GetText("Set \"%s\" was incompletely pulled from bank.", setName));
             end
+
+            ClearCursor();
             return not error;
         else
             c:Println(c:GetText("Not enough bag space to pull \"%s\" from bank. Free: %s, needed: %s.", setName,
@@ -1455,7 +1457,7 @@ function c:GetItemFromBank(itemString, bagSpaceCache)
     if bagId then
         c:SaveLastBankLocation(itemString, bagId, bagSlotId);
         if not bagSlotId then
-            PickupContainerItem(-1, bagId - BANKCONTAINER_BAGID_OFFSET);
+            PickupContainerItem(-1, bagId);
         else
             PickupContainerItem(bagId, bagSlotId);
         end

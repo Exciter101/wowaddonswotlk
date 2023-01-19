@@ -283,7 +283,7 @@ end
 function c:CreateSetEntry(index)
     local chSet = CreateFrame("CheckButton", "GqUiSetCheckBox_" .. index, GqUiScrollFrameContent,
         "ChatConfigCheckButtonTemplate");
-    chSet:SetPushedTexture(nil);
+    c:ClearPushedTexture(chSet);
     chSet:SetPropagateKeyboardInput(true);
     chSet:SetPoint("TOPLEFT", 0, -(index - 1) * checkboxYOffset);
     chSet:SetScript("OnClick", function(self)

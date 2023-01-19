@@ -239,7 +239,7 @@ function c:HookBlizzardFrameScripts()
         c:SetFramePositions();
     end
 end
-local a = 1;
+
 function c:SetFramePositions(norepeat)
     local xOffset = 0;
 
@@ -869,6 +869,19 @@ local function GetContainersForItems(itemStrings)
                     end
                 end
             end
+        elseif ElvUI then
+            -- I'm just guessing here...
+            for bagId = -8, 8 do
+                for slotId = 1, MAX_CONTAINER_ITEMS do
+                    local frameName = "ElvUI_ContainerFrameBag" .. bagId .. "Slot" .. slotId;
+                    if _G[frameName] and _G[frameName].itemLink then
+                        local itemString = c:GetItemString(_G[frameName].itemLink);
+                        if c:IsEmpty(itemString) or not c:TableContains(itemStrings, itemString) then
+                            tinsert(result, _G[frameName]);
+                        end
+                    end
+                end
+            end
         else
             -- default player bags / bagnon containers
             for bagId = 0, NUM_BAG_SLOTS do
@@ -983,6 +996,14 @@ function c:HighlightItemsInBags(itemStrings)
         for bagId = 1, 13 do
             for slotId = 1, MAX_CONTAINER_ITEMS do
                 ResetFrameAlpha("TInvainerFrame" .. bagId .. "Item" .. slotId);
+            end
+        end
+    elseif ElvUI then
+        -- reset alpha
+        -- I'm just guessing here...
+        for bagId = -8, 8 do
+            for slotId = 1, MAX_CONTAINER_ITEMS do
+                ResetFrameAlpha("ElvUI_ContainerFrameBag" .. bagId .. "Slot" .. slotId);
             end
         end
     else

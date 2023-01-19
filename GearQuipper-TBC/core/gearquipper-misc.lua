@@ -319,11 +319,19 @@ function c:CheckNeccessaryPullSpace(setName)
 end
 
 function c:FindItemInBank(neededItemString)
+    local minBankInvId, maxBankInvId = 48, 75;
+    local bankInvIdOffset = 47;
+    if c:IsNewApi() then
+        bankInvIdOffset = 59;
+        minBankInvId = 52;
+        maxBankInvId = 87;
+    end
+
     -- bank container
-    for invId = 48, 75 do
+    for invId = minBankInvId, maxBankInvId do
         local itemString = c:GetItemString(GetInventoryItemLink("player", invId));
         if c:Equals(itemString, neededItemString) then
-            return invId;
+            return invId - bankInvIdOffset;
         end
     end
 

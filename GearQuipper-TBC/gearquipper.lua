@@ -7,7 +7,7 @@ GQ_OPTIONS = GQ_OPTIONS or {};
 GQ_DATA = GQ_DATA or {};
 GQ_AUX = GQ_AUX or {};
 
-local GQ_VERSION = 48;
+local GQ_VERSION = 50;
 
 c.VALUE_NONE = "VALUE_NONE";
 c.KEYWORD_NONE = "$NONE";
@@ -102,8 +102,12 @@ function c:IsTbcClassic()
 end
 
 function c:IsWotlkClassic()
-    -- ProjectId to be defined by Blizzard
-    return c:IsTbcClassic();
+    return WOW_PROJECT_WRATH_CLASSIC and WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC;
+end
+
+function c:IsNewApi()
+    local version, build, date, tocversion = GetBuildInfo();
+    return tocversion >= 30401;
 end
 
 function c:GetHomeLatency(addFixed)

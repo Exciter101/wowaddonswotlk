@@ -1,3 +1,11 @@
+Version 50 (23-01-18):
+- Fixed ElvUI blank inventory slots
+- Fixed ElvUI bag item highlighting
+
+Version 49 (23-01-18):
+- Added compatibility for new Blizzard addon API
+- New interface version: 30401
+
 Version 48 (22-12-05):
 - Fixed an error with item comparison tooltips on ammunition
 - Fixed issues with repositioning of MailFrame, CraftFrame and TradeSkillFrame

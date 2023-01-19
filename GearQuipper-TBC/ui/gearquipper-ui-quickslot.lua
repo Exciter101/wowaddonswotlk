@@ -96,7 +96,7 @@ function c:AddQuickSlot(slotId, slotIndex, itemEntry)
 
     local link, quality, count, texture;
     if itemEntry[c.ITEM_BAG_ID] then
-        texture, count, _, quality, _, _, link = GetContainerItemInfo(itemEntry[c.ITEM_BAG_ID],
+        texture, count, _, quality, _, _, link = c:GetContainerItemInfo(itemEntry[c.ITEM_BAG_ID],
             itemEntry[c.ITEM_SLOT_ID]);
     else
         _, link, quality, _, _, _, _, count, _, texture = GetItemInfo(itemEntry[c.ITEM_STRING]);

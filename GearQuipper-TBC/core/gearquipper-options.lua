@@ -133,7 +133,7 @@ function c:InitOptions()
         c.OPT_ACTIONBARS_SHOW_CONFIRMATION_ON_FIRST_TALENT_CHANGE = true;
     end
 
-    GQ_OPTIONS[c.OPT_SAVECHANGES] = GQ_OPTIONS[c.OPT_SAVECHANGES] or c.OPTVALUE_SAVECHANGES_CHARMENU;
+    GQ_OPTIONS[c.OPT_SAVECHANGES] = GQ_OPTIONS[c.OPT_SAVECHANGES] or c.OPTVALUE_SAVECHANGES_GQMENU;
     GQ_OPTIONS[c.OPT_SAVECHANGES_ACTIONSLOTS] = GQ_OPTIONS[c.OPT_SAVECHANGES_ACTIONSLOTS] or
                                                     c.OPTVALUE_SAVECHANGES_ALWAYS;
     GQ_OPTIONS[c.OPT_SWITCHDELAY] = GQ_OPTIONS[c.OPT_SWITCHDELAY] or 600;
@@ -796,21 +796,21 @@ local function GetScriptListEntry(uiIndex)
             self.Middle:SetTexture(nil);
             self.Right:SetTexture(nil);
             self:SetNormalTexture(nil);
-            self:SetPushedTexture(nil);
+            c:ClearPushedTexture(self);
         end);
         scriptEntry:SetScript("OnMouseUp", function(self)
             self.Left:SetTexture(nil);
             self.Middle:SetTexture(nil);
             self.Right:SetTexture(nil);
             self:SetNormalTexture(nil);
-            self:SetPushedTexture(nil);
+            c:ClearPushedTexture(self);
         end);
         scriptEntry:SetScript("OnClick", function(self)
             self.Left:SetTexture(nil);
             self.Middle:SetTexture(nil);
             self.Right:SetTexture(nil);
             self:SetNormalTexture(nil);
-            self:SetPushedTexture(nil);
+            c:ClearPushedTexture(self);
             SelectScript(self);
         end);
 
@@ -854,7 +854,7 @@ function c:RefreshScripts()
                 entry.Middle:SetTexture(nil);
                 entry.Right:SetTexture(nil);
                 entry:SetNormalTexture(nil);
-                entry:SetPushedTexture(nil);
+                c:ClearPushedTexture(entry);
 
                 uiIndex = uiIndex + 1;
             end
