@@ -114,7 +114,8 @@ function c:AddQuickSlot(slotId, slotIndex, itemEntry)
     end
 
     if quality > 1 then
-        quickSlot.glow:SetVertexColor(GetItemQualityColor(quality));
+        local r, g, b, hex = GetItemQualityColor(quality);
+        quickSlot.glow:SetVertexColor(r, g, b);
         quickSlot.glow:Show();
     else
         quickSlot.glow:Hide();

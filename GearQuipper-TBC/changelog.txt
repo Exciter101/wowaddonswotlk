@@ -1,3 +1,6 @@
+Version 51 (23-01-20):
+- Fixed quick slots
+
 Version 50 (23-01-18):
 - Fixed ElvUI blank inventory slots
 - Fixed ElvUI bag item highlighting
