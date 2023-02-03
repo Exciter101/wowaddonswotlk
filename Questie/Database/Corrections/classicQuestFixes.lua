@@ -936,12 +936,14 @@ function QuestieQuestFixes:Load()
         },
         [1861] = {
             [questKeys.exclusiveTo] = {1880},
+            [questKeys.preQuestSingle] = {},
         },
         [1879] = {
             [questKeys.exclusiveTo] = {1861, 1880},
         },
         [1880] = {
             [questKeys.exclusiveTo] = {1861},
+            [questKeys.preQuestSingle] = {},
         },
         [1882] = {
             [questKeys.preQuestSingle] = {},
@@ -962,6 +964,9 @@ function QuestieQuestFixes:Load()
         },
         [1944] = {
             [questKeys.preQuestSingle] = {}, -- #2253
+        },
+        [1948] = {
+            [questKeys.preQuestSingle] = {1947},
         },
         [1950] = {
             [questKeys.triggerEnd] = {"Secret phrase found", {[zoneIDs.THOUSAND_NEEDLES]={{79.56,75.65}}}},
