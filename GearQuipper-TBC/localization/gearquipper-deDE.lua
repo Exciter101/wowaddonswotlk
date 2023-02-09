@@ -55,6 +55,7 @@ L["Do you really want to remove \"%s\"?"]                                       
 L["Empty slot"]                                                                                         = "Leerer Slot";
 L["enabled"]                                                                                            = "eingeschaltet";
 L["Enter a name for this set:"]                                                                         = "Gib einen Namen für dieses Set ein:";
+L["Error while displaying item comparison tooltip for %s. Tooltip was resetted. This message will only be shown once per session."] = "Fehler beim Anzeigen des Set-Vergleich-Tooltips für %s. Tooltip wurde zurückgesetzt. Diese Nachricht wird nur ein mal pro Session angezeigt.";
 L["Event bindings %s."]                                                                                 = "Eventbindungen %s.";
 L["Event bindings disabled."]                                                                           = "Event-Bindungen deaktiviert.";
 L["Expected Item:"]                                                                                     = "Erwarteter Gegenstand:";

@@ -1,3 +1,7 @@
+Version 52 (23-02-08):
+- Set item comparison feature now automatically resets on error
+- Weapon quickslots now open below the slot instead of to the right side
+
 Version 51 (23-01-20):
 - Fixed quick slots
 

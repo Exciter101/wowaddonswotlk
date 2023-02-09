@@ -14,14 +14,12 @@ local function GetSlotDimensions(slotId)
 end
 
 function c:CreateQuickBar(slotId)
-    local parent = _G["Character" .. c:GetSlotInfo()[slotId]];
+    local parent = _G["Character" .. c:GetSlotInfo(slotId)];
     local frame = CreateFrame("Frame", "GQ_QuickBar_" .. slotId, parent);
     local slotSize, slotMargin = GetSlotDimensions(slotId);
 
-    frame:SetHeight(slotSize + slotMargin);
-    frame:SetPoint("TOPLEFT", parent, "TOPLEFT", slotSize, (slotMargin / 2));
     frame:SetFrameStrata("HIGH");
-    frame:SetScript("OnHide", function(self)
+    frame:SetScript("OnHide", function()
         c:HighlightItemsInBags();
         ClearCursor();
     end);
@@ -29,9 +27,18 @@ function c:CreateQuickBar(slotId)
     frame.parent = parent;
 
     frame.border = frame:CreateTexture("GQ_QuickBarBorderTex", "BORDER");
-    frame.border:SetPoint("TOPLEFT");
     frame.border:SetTexture("Interface\\PaperDoll\\UI-Backpack-EmptySlot.blp");
-    frame.border:SetHeight(slotSize + slotMargin);
+    frame.border:SetPoint("TOPLEFT");
+
+    if c:IsWeaponSlot(slotId) then
+        frame:SetWidth(slotSize + slotMargin);
+        frame:SetPoint("TOPLEFT", parent, "TOPLEFT", -(slotMargin / 3 * 2), -slotSize);
+        frame.border:SetWidth(slotSize + slotMargin);
+    else
+        frame:SetHeight(slotSize + slotMargin);
+        frame:SetPoint("TOPLEFT", parent, "TOPLEFT", slotSize, slotMargin / 2);
+        frame.border:SetHeight(slotSize + slotMargin);
+    end
 
     local S = c:GetElvUiSkinModule();
     if S then
@@ -48,9 +55,15 @@ function c:CreateQuickSlot(slotId, index)
 
     frame:SetWidth(slotSize);
     frame:SetHeight(slotSize);
-    frame:SetPoint("TOPLEFT", quickBars[slotId], "TOPLEFT",
-        (slotSize * (index - 1)) + (slotMargin * (index - 1)) + slotMargin, -(slotMargin / 2));
     frame:SetFrameStrata("HIGH");
+
+    if c:IsWeaponSlot(slotId) then
+        frame:SetPoint("TOPLEFT", quickBars[slotId], "TOPLEFT", slotMargin / 2,
+            -(slotSize * (index - 1)) - (slotMargin * (index - 1)) - slotMargin);
+    else
+        frame:SetPoint("TOPLEFT", quickBars[slotId], "TOPLEFT",
+            (slotSize * (index - 1)) + (slotMargin * (index - 1)) + slotMargin, -(slotMargin / 2));
+    end
 
     frame:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
@@ -155,14 +168,25 @@ function c:OpenQuickBar(slotId)
             end
 
             if index > 0 then
-                quickBars[slotId]:SetWidth((slotSize * index) + (slotMargin * (index - 1)));
-                quickBars[slotId].border:SetWidth((slotSize * index) + (slotMargin * (index - 1)) + (slotMargin * 2));
-                quickBars[slotId]:Show();
-
                 local S = c:GetElvUiSkinModule();
-                if S then
-                    quickBars[slotId]:SetWidth((slotSize * index) + (slotMargin * (index - 1)) + 16);
+
+                if c:IsWeaponSlot(slotId) then
+                    quickBars[slotId].border:SetHeight((slotSize * index) + (slotMargin * (index - 1)) +
+                                                           (slotMargin * 2));
+                    -- if S then
+                    -- quickBars[slotId]:SetHeight((slotSize * index) + (slotMargin * (index - 1)));
+                    -- else
+                    quickBars[slotId]:SetHeight((slotSize * index) + (slotMargin * (index - 1)));
+                    -- end
+                else
+                    quickBars[slotId].border:SetWidth((slotSize * index) + (slotMargin * (index - 1)) + (slotMargin * 2));
+                    if S then
+                        quickBars[slotId]:SetWidth((slotSize * index) + (slotMargin * (index - 1)) + 16);
+                    else
+                        quickBars[slotId]:SetWidth((slotSize * index) + (slotMargin * (index - 1)));
+                    end
                 end
+                quickBars[slotId]:Show();
 
                 c:HighlightItemsInBags(itemStrings);
                 GameTooltip:Hide();

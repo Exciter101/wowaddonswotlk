@@ -460,7 +460,19 @@ function c:ShowSetItemComparison(itemLink, setName, gameTooltipOwner)
                     -- ammo workaround
                     setItemLink = c:GetItemLink(setItemLink);
                 end
-                tt:SetHyperlink(setItemLink);
+
+                if not c:IsEmpty(setItemLink) then
+                    if not pcall(function()
+                        tt:SetHyperlink(setItemLink);
+                    end) then
+                        if not c.itemComparisonErrorShown then
+                            c:Println(c:GetText(
+                                "Error while displaying item comparison tooltip for %s. Tooltip was resetted. This message will only be shown once per session.", itemLink));
+                            c.itemComparisonErrorShown = true;
+                        end
+                        c:SaveComparisonSetName(); -- reset set item comparison on error
+                    end
+                end
             else
                 tt:AddLine(c:GetText("Empty slot"));
             end

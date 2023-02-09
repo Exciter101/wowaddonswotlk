@@ -939,6 +939,12 @@ function c:GetSlotInfo(slotId)
     end
 end
 
+function c:IsWeaponSlot(slotId)
+    if slotId == INVSLOT_AMMO or slotId == INVSLOT_MAINHAND or slotId == INVSLOT_OFFHAND or slotId == INVSLOT_RANGED then
+        return true;
+    end
+end
+
 local defaultSlotSwitchOrder;
 function c:GetDefaultSlotSwitchOrder()
     if not defaultSlotSwitchOrder then

@@ -2,7 +2,7 @@
 ## Title: GearQuipper |c004AAAE7WOTLK|r
 ## Notes: Quick switch your gear sets and action slots.
 ## Author: Benjamin Bober
-## Version: 51
+## Version: 52
 ## SavedVariables: GQ_DATA, GQ_OPTIONS, GQ_AUX
 ## OptionalDeps: GW2_UI, LibStub, LibDataBroker-1.1, CallbackHandler-1.0
 
