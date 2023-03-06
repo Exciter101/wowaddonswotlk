@@ -79,8 +79,7 @@ function c:CreateQuickSlot(slotId, index)
 
             local itemString = self:GetAttribute("item2");
             -- local itemLink = c:GetItemLink(itemString);
-            local bagId, bagSlotId = c:FindItemInBags(itemString);
-            if not bagId and c:IsAtBank() then
+            if not c:FindItemInBags(itemString) and c:IsAtBank() then
                 -- item not in bag -> check in bank
                 local bagSpaceCache = c:GetBagSpace();
                 if c:GetItemFromBank(itemString, bagSpaceCache) then

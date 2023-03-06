@@ -2,6 +2,9 @@
 gearquipper = gearquipper or {};
 local c = gearquipper;
 
+local CONTAINER_FIRST_BANK_SLOT = 60;
+local CONTAINER_LAST_BANK_SLOT = 87;
+
 function c:SaveConditionsMet(type)
     type = type or c.OPT_SAVECHANGES;
     return GQ_OPTIONS[type] == c.OPTVALUE_SAVECHANGES_ALWAYS or
@@ -186,10 +189,14 @@ end
 
 function c:IsItemEquipped(itemString)
     -- needed for checking swapped rings on sets
+    local list = {};
     for _, slotId in ipairs(c:GetSlotSwitchOrder()) do
         if c:Equals(c:GetItemString(slotId), itemString) then
-            return slotId;
+            tinsert(list, slotId);
         end
+    end
+    if getn(list) > 0 then
+        return list;
     end
 end
 
@@ -275,7 +282,7 @@ function c:GetBankSpace()
         end
 
         -- bank container
-        for i = 48, 71 do
+        for i = CONTAINER_FIRST_BANK_SLOT, CONTAINER_LAST_BANK_SLOT do
             if not GetInventoryItemLink("player", i) then
                 bankSpaceCache[i] = 1;
                 sum = sum + 1;
@@ -291,7 +298,9 @@ function c:CheckNeccessaryPushSpace(setName)
         local items = {};
         for _, slotId in ipairs(c:GetSlotSwitchOrder()) do
             local itemString = c:LoadSlot(slotId, setName);
+            local currentSetName = c:LoadCurrentSetName();
             if (not c:LoadPartialOption(setName) or c:LoadSlotState(slotId, setName)) and not c:IsEmpty(itemString) and
+                (not currentSetName or not c:IsSetItem(itemString, currentSetName)) and
                 (c:IsSetItemOnSlot(slotId, itemString) or c:FindItemInBags(itemString)) then
                 items[slotId] = itemString;
             end
@@ -324,7 +333,7 @@ function c:FindItemInBank(neededItemString)
     if c:IsNewApi() then
         bankInvIdOffset = 59;
         minBankInvId = 52;
-        maxBankInvId = 87;
+        maxBankInvId = CONTAINER_LAST_BANK_SLOT;
     end
 
     -- bank container
@@ -385,13 +394,20 @@ function c:CheckNeccessaryBagSpace(setName)
 end
 
 function c:FindItemInBags(neededItemString)
+    local list = {};
     for bagId = 0, NUM_BAG_SLOTS do
         for slotId = 1, GetContainerNumSlots(bagId) do
             local itemString = c:GetItemString(GetContainerItemLink(bagId, slotId));
             if itemString == neededItemString then
-                return bagId, slotId;
+                tinsert(list, {
+                    bagId = bagId,
+                    slotId = slotId
+                });
             end
         end
+    end
+    if getn(list) > 0 then
+        return list;
     end
 end
 
@@ -569,13 +585,13 @@ function c:GetMatchingItems(slotId)
         local itemSlots = c:GetItemSlots(itemString);
         for _, equippedSlotId in ipairs(itemSlots) do
             local equippedItemString = GetInventoryItemLink("player", equippedSlotId);
-            if not c:Equals(equippedItemString, itemString) then
+            if not c:IsEmpty(equippedItemString) and not c:Equals(equippedItemString, itemString) then
                 table.insert(result, CreateEntry(nil, equippedSlotId, equippedItemString));
             end
         end
     end
 
-    return result, table.getn(result);
+    return result, getn(result);
 end
 
 local CACHETYPE_BAGS, CACHETYPE_GEAR = "bags", "gear";
@@ -849,7 +865,7 @@ end
 
 function c:IsSetItemOnSlot(slotId, itemString)
     itemString = itemString or c:LoadSlot(slotId);
-    return c:GetItemString(slotId) == itemString or (c:IsEmpty(slotId) and c:IsEmpty(itemString));
+    return c:Equals(c:GetItemString(slotId), itemString);
 end
 
 function c:IsEmpty(value)
@@ -943,6 +959,13 @@ function c:IsWeaponSlot(slotId)
     if slotId == INVSLOT_AMMO or slotId == INVSLOT_MAINHAND or slotId == INVSLOT_OFFHAND or slotId == INVSLOT_RANGED then
         return true;
     end
+end
+
+function c:GetOtherWeaponSlot(slotId)
+    if slotId == INVSLOT_MAINHAND then
+        return INVSLOT_OFFHAND;
+    end
+    return INVSLOT_MAINHAND;
 end
 
 local defaultSlotSwitchOrder;

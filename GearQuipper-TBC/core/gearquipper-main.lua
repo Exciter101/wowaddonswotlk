@@ -1160,9 +1160,7 @@ function c:SwitchToSet(switchArgs)
                             -- equip item
                             local itemLink = c:GetItemLink(desiredItemString);
                             if itemLink then
-                                local bagId, bagSlotId = c:FindItemInBags(desiredItemString);
-
-                                if not bagId and c:IsAtBank() then
+                                if not c:FindItemInBags(desiredItemString) and c:IsAtBank() then
                                     -- item not in bag -> check in bank
                                     if not c:GetItemFromBank(c:GetItemString(itemLink), bagSpaceCache) then
                                         interrupted = true;
@@ -1171,9 +1169,11 @@ function c:SwitchToSet(switchArgs)
 
                                     C_Timer.After(c:GetHomeLatency(100 + GQ_OPTIONS[c.OPT_SWITCHDELAY]) / 1000,
                                         function()
-                                            c:TryEquipItem(slotId, itemLink, bagSpaceCache, uniqueGems, slotSwitchOrder);
+                                            c:TryEquipItem(slotId, itemLink, bagSpaceCache, uniqueGems, slotSwitchOrder,
+                                                desiredSet[INVSLOT_MAINHAND], desiredSet[INVSLOT_OFFHAND]);
                                         end);
-                                elseif not c:TryEquipItem(slotId, itemLink, bagSpaceCache, uniqueGems, slotSwitchOrder) then
+                                elseif not c:TryEquipItem(slotId, itemLink, bagSpaceCache, uniqueGems, slotSwitchOrder,
+                                    desiredSet[INVSLOT_MAINHAND], desiredSet[INVSLOT_OFFHAND]) then
                                     interrupted = true;
                                     notifyInventoryError = true;
                                 end
@@ -1207,11 +1207,12 @@ function c:SwitchToSet(switchArgs)
     end
 end
 
-function c:TryEquipItem(slotId, itemLink, bagSpaceCache, targetSetUniqueGems, slotSwitchOrder)
+function c:TryEquipItem(slotId, itemLink, bagSpaceCache, targetSetUniqueGems, slotSwitchOrder, mainHandItemLink,
+    offHandItemLink)
     if not targetSetUniqueGems[slotId] then
-        return c:EquipItem(slotId, itemLink, bagSpaceCache);
+        return c:EquipItem(slotId, itemLink, bagSpaceCache, mainHandItemLink, offHandItemLink);
     else
-        -- potential unique gem conflict -> unequip conflicting items
+        -- potential unique gem conflict -> unequip conflicting items first
         for _, gemItemString in ipairs(targetSetUniqueGems[slotId]) do
             local itemSlotId = c:IsGemSocketed(gemItemString);
             if itemSlotId and c:TableContains(slotSwitchOrder, itemSlotId) then
@@ -1220,14 +1221,16 @@ function c:TryEquipItem(slotId, itemLink, bagSpaceCache, targetSetUniqueGems, sl
                 end
             end
         end
-        return c:EquipItem(slotId, itemLink, bagSpaceCache);
+        return c:EquipItem(slotId, itemLink, bagSpaceCache, mainHandItemLink, offHandItemLink);
     end
 end
 
-function c:EquipItem(slotId, itemLink, bagSpaceCache)
+function c:EquipItem(slotId, itemLink, bagSpaceCache, mainHandItemLink, offHandItemLink)
     local itemString = c:GetItemString(itemLink);
-    local bagId, bagSlotId = c:FindItemInBags(itemString);
-    if bagId then
+    local list = c:FindItemInBags(itemString);
+
+    if list then
+        local bagId, bagSlotId = list[1].bagId, list[1].slotId;
         c:SaveLastBagLocation(itemString, bagId, bagSlotId);
         if c:IsEmpty(slotId) then
             bagSpaceCache[bagId] = bagSpaceCache[bagId] + 1;
@@ -1237,9 +1240,35 @@ function c:EquipItem(slotId, itemLink, bagSpaceCache)
     if slotId == INVSLOT_AMMO then
         -- ammo workaround
         EquipItemByName(itemLink);
-    else
-        EquipItemByName(itemLink, slotId);
+        return true;
+    elseif c:Equals(mainHandItemLink, offHandItemLink) and (slotId == INVSLOT_MAINHAND or slotId == INVSLOT_OFFHAND) then
+        -- identical weapons workaround
+        local equippedList = c:IsItemEquipped(itemString);
+        if not equippedList then
+            PickupContainerItem(list[1].bagId, list[1].slotId);
+            if CursorHasItem() then
+                EquipCursorItem(slotId);
+                ClearCursor();
+            end
+            if getn(list) > 1 then
+                PickupContainerItem(list[2].bagId, list[2].slotId);
+                if CursorHasItem() then
+                    EquipCursorItem(INVSLOT_OFFHAND);
+                    ClearCursor();
+                end
+            end
+        elseif getn(equippedList) < 2 then
+            PickupContainerItem(list[1].bagId, list[1].slotId);
+            if CursorHasItem() then
+                EquipCursorItem(slotId);
+                ClearCursor();
+            end
+        end
+        return true;
     end
+
+    -- default
+    EquipItemByName(itemLink, slotId);
     return true;
 end
 
@@ -1378,13 +1407,12 @@ function c:PushSetToBank(setName)
                     not c:IsSetCurrentSetItem(itemString) then
 
                     ClearCursor();
-
                     if c:IsSetItemOnSlot(slotId, itemString) then
                         PickupInventoryItem(slotId);
                     else
-                        local bagId, bagSlotId = c:FindItemInBags(itemString);
-                        if bagId then
-                            PickupContainerItem(bagId, bagSlotId);
+                        local list = c:FindItemInBags(itemString);
+                        if list then
+                            PickupContainerItem(list[1].bagId, list[1].slotId);
                         end
                     end
 

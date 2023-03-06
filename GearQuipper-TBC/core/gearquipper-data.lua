@@ -861,6 +861,26 @@ function c:LoadLastBankLocation(itemString)
     end
 end
 
+function c:ResetBagLocationIndex(characterName)
+    if characterName then
+        GQ_DATA[c:GetRealmName()][c:GetCharName()][FIELD_INVENTORY] = {};
+        return;
+    end
+    for characterName, _ in pairs(GQ_DATA[c:GetRealmName()]) do
+        GQ_DATA[c:GetRealmName()][characterName][FIELD_INVENTORY] = {};
+    end
+end
+
+function c:ResetBankLocationIndex(characterName)
+    if characterName then
+        GQ_DATA[c:GetRealmName()][c:GetCharName()][FIELD_BANK] = {};
+        return;
+    end
+    for characterName, _ in pairs(GQ_DATA[c:GetRealmName()]) do
+        GQ_DATA[c:GetRealmName()][characterName][FIELD_BANK] = {};
+    end
+end
+
 function c:AddIgnoredSlot(slotId)
     c:DebugPrint("AddIgnoredSlot", slotId);
     GQ_DATA[c:GetRealmName()][c:GetCharName()][FIELD_IGNOREDSLOTS][slotId] = not c:IsSetItemOnSlot(slotId);

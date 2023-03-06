@@ -467,7 +467,8 @@ function c:ShowSetItemComparison(itemLink, setName, gameTooltipOwner)
                     end) then
                         if not c.itemComparisonErrorShown then
                             c:Println(c:GetText(
-                                "Error while displaying item comparison tooltip for %s. Tooltip was resetted. This message will only be shown once per session.", itemLink));
+                                "Error while displaying item comparison tooltip for %s. Tooltip was resetted. This message will only be shown once per session.",
+                                itemLink));
                             c.itemComparisonErrorShown = true;
                         end
                         c:SaveComparisonSetName(); -- reset set item comparison on error
@@ -972,9 +973,13 @@ function c:HighlightItemsEquipped(itemStrings, setName)
             _G["Character" .. name]:SetAlpha(0.35);
         end
         for _, itemString in pairs(itemStrings) do
-            local slotId = c:IsItemEquipped(itemString);
-            if slotId and (not c:LoadPartialOption(setName) or c:LoadSlotState(slotId, setName)) then
-                ResetFrameAlpha("Character" .. c:GetSlotInfo()[slotId]);
+            local list = c:IsItemEquipped(itemString);
+            if list then
+                for _, slotId in ipairs(list) do
+                    if not c:LoadPartialOption(setName) or c:LoadSlotState(slotId, setName) then
+                        ResetFrameAlpha("Character" .. c:GetSlotInfo()[slotId]);
+                    end
+                end
             end
         end
     end

@@ -7,7 +7,7 @@ GQ_OPTIONS = GQ_OPTIONS or {};
 GQ_DATA = GQ_DATA or {};
 GQ_AUX = GQ_AUX or {};
 
-local GQ_VERSION = 52;
+local GQ_VERSION = 53;
 
 c.VALUE_NONE = "VALUE_NONE";
 c.KEYWORD_NONE = "$NONE";
@@ -29,14 +29,11 @@ function c:Init()
         GQ_OPTIONS[c.OPT_VERSION] = 0;
     end
     if GQ_OPTIONS[c.OPT_VERSION] < GQ_VERSION then
-        -- if not GQ_OPTIONS[c.OPT_VERSION] or tonumber(GQ_OPTIONS[c.OPT_VERSION]) < 14 then
-        -- add slotStates
-        --	c:DataBase_Update14();
-        -- end
-        -- if not GQ_OPTIONS[c.OPT_VERSION] or tonumber(GQ_OPTIONS[c.OPT_VERSION]) < 17 then
-        -- remove old eventbindings
-        --	c:DataBase_Update17();
-        -- end
+        if GQ_OPTIONS[c.OPT_VERSION] < 53 then
+            -- reset bag/bank location index
+            c:ResetBagLocationIndex();
+            c:ResetBankLocationIndex();
+        end
 
         GQ_OPTIONS[c.OPT_SHOW_WATERMARK] = true;
         GQ_OPTIONS[c.OPT_VERSION] = GQ_VERSION; -- finish update
