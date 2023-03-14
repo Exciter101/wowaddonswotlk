@@ -1,3 +1,6 @@
+Version 54 (23-03-07):
+- Fixed issues with items of incorrect types in quick bars
+
 Version 53 (23-03-04):
 - Fixed issues where push to bank/pull from bank failed
 - Fixed issue where two completely identical weapons would not be switched into gear correctly

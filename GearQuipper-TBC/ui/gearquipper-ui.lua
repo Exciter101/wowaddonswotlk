@@ -923,10 +923,10 @@ local function GetContainersForItems(itemStrings)
 
             if c:IsAtBank() then
                 -- default bank container
-                for invId = 48, 75 do
-                    local frameName = "BankFrameItem" .. (invId - 47);
+                for bankSlotId = 1, 28 do
+                    local frameName = "BankFrameItem" .. bankSlotId;
                     if _G[frameName] then
-                        local itemString = c:GetItemString(GetContainerItemLink(-1, invId - 47));
+                        local itemString = c:GetItemString(GetContainerItemLink(BANK_CONTAINER, bankSlotId));
                         if c:IsEmpty(itemString) or not c:TableContains(itemStrings, itemString) then
                             tinsert(result, _G[frameName]);
                         end
@@ -1033,8 +1033,8 @@ function c:HighlightItemsInBags(itemStrings)
         end
 
         if c:IsAtBank() then
-            for invId = 48, 75 do
-                ResetFrameAlpha("BankFrameItem" .. (invId - 47));
+            for frameId = 1, 28 do
+                ResetFrameAlpha("BankFrameItem" .. frameId);
             end
         end
     end

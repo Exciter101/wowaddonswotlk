@@ -1481,13 +1481,13 @@ end
 function c:GetItemFromBank(itemString, bagSpaceCache)
     ClearCursor();
 
-    local bagId, bagSlotId = c:FindItemInBank(itemString);
-    if bagId then
-        c:SaveLastBankLocation(itemString, bagId, bagSlotId);
-        if not bagSlotId then
-            PickupContainerItem(-1, bagId);
+    local containerId, containerSlotId = c:FindItemInBank(itemString);
+    if containerId then
+        c:SaveLastBankLocation(itemString, containerId, containerSlotId);
+        if not containerSlotId then
+            PickupContainerItem(BANK_CONTAINER, containerId);
         else
-            PickupContainerItem(bagId, bagSlotId);
+            PickupContainerItem(containerId, containerSlotId);
         end
     end
 

@@ -2,8 +2,13 @@
 gearquipper = gearquipper or {};
 local c = gearquipper;
 
-local CONTAINER_FIRST_BANK_SLOT = 60;
-local CONTAINER_LAST_BANK_SLOT = 87;
+local CONTAINER_FIRST_BANK_BAG_ID = NUM_BAG_SLOTS + 1;
+local CONTAINER_LAST_BANK_BAG_ID = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
+local CONTAINER_FIRST_BANK_SLOT_ID = 60;
+local CONTAINER_FIRST_BANK_SLOT_ID_LEGACY = 48;
+local CONTAINER_LAST_BANK_SLOT_ID = 87;
+local CONTAINER_LAST_BANK_SLOT_ID_LEGACY = 75;
+local CONTAINER_BAGPACK_ID = 0;
 
 function c:SaveConditionsMet(type)
     type = type or c.OPT_SAVECHANGES;
@@ -232,7 +237,7 @@ function c:AffectsOnlyWeapons(setName, currentSetName)
     if not currentSetName then
         return false; -- might be improved some day; this is just a workaround for a rare scenario
     end
-    if table.getn(c:GetAffectedActionSlots(setName, currentSetName)) > 0 then
+    if getn(c:GetAffectedActionSlots(setName, currentSetName)) > 0 then
         return false;
     end
     for _, slotId in ipairs(c:GetAffectedEquipmentSlots(setName, currentSetName)) do
@@ -262,7 +267,7 @@ end
 ---- [bank] ----
 
 function c:IsAtBank()
-    local noFreeSlots, bagType = GetContainerNumFreeSlots(-1);
+    local noFreeSlots, bagType = GetContainerNumFreeSlots(BANK_CONTAINER);
     return bagType ~= nil;
 end
 
@@ -271,7 +276,7 @@ function c:GetBankSpace()
         local bankSpaceCache, sum = {}, 0;
 
         -- bank bags
-        for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+        for i = CONTAINER_FIRST_BANK_BAG_ID, CONTAINER_LAST_BANK_BAG_ID do
             local invId, noFreeSlots, bagType = ContainerIDToInventoryID(i), GetContainerNumFreeSlots(i);
             if bagType == 0 then
                 bankSpaceCache[invId] = noFreeSlots;
@@ -282,7 +287,7 @@ function c:GetBankSpace()
         end
 
         -- bank container
-        for i = CONTAINER_FIRST_BANK_SLOT, CONTAINER_LAST_BANK_SLOT do
+        for i = CONTAINER_FIRST_BANK_SLOT_ID, CONTAINER_LAST_BANK_SLOT_ID do
             if not GetInventoryItemLink("player", i) then
                 bankSpaceCache[i] = 1;
                 sum = sum + 1;
@@ -327,29 +332,29 @@ function c:CheckNeccessaryPullSpace(setName)
     end
 end
 
-function c:FindItemInBank(neededItemString)
-    local minBankInvId, maxBankInvId = 48, 75;
-    local bankInvIdOffset = 47;
+--- Returns a tuple of (containerId, slotId) for the use of PickupContainerItem(containerId, containerSlotId).
+---@param itemString string
+function c:FindItemInBank(itemString)
+    local minBankContainerId, maxBankContainerId = CONTAINER_FIRST_BANK_SLOT_ID_LEGACY,
+        CONTAINER_LAST_BANK_SLOT_ID_LEGACY;
     if c:IsNewApi() then
-        bankInvIdOffset = 59;
-        minBankInvId = 52;
-        maxBankInvId = CONTAINER_LAST_BANK_SLOT;
+        minBankContainerId, maxBankContainerId = CONTAINER_FIRST_BANK_SLOT_ID, CONTAINER_LAST_BANK_SLOT_ID;
     end
 
     -- bank container
-    for invId = minBankInvId, maxBankInvId do
-        local itemString = c:GetItemString(GetInventoryItemLink("player", invId));
-        if c:Equals(itemString, neededItemString) then
-            return invId - bankInvIdOffset;
+    for containerId = minBankContainerId, maxBankContainerId do
+        local containerItemString = c:GetItemString(GetInventoryItemLink("player", containerId));
+        if c:Equals(containerItemString, itemString) then
+            return containerId - (minBankContainerId - 1);
         end
     end
 
     -- bank bags
-    for bagId = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-        for slotId = 1, GetContainerNumSlots(bagId) do
-            local itemString = c:GetItemString(GetContainerItemLink(bagId, slotId));
-            if c:Equals(itemString, neededItemString) then
-                return bagId, slotId;
+    for containerId = CONTAINER_FIRST_BANK_BAG_ID, CONTAINER_LAST_BANK_BAG_ID do
+        for containerSlotId = 1, GetContainerNumSlots(containerId) do
+            local containerItemString = c:GetItemString(GetContainerItemLink(containerId, containerSlotId));
+            if c:Equals(itemString, containerItemString) then
+                return containerId, containerSlotId;
             end
         end
     end
@@ -359,7 +364,7 @@ end
 
 function c:GetBagSpace()
     local bagSpaceCache, sum = {}, 0;
-    for i = 0, NUM_BAG_SLOTS do
+    for i = CONTAINER_BAGPACK_ID, NUM_BAG_SLOTS do
         local noFreeSlots, bagType = GetContainerNumFreeSlots(i);
         if bagType == 0 then
             bagSpaceCache[i] = noFreeSlots;
@@ -395,7 +400,7 @@ end
 
 function c:FindItemInBags(neededItemString)
     local list = {};
-    for bagId = 0, NUM_BAG_SLOTS do
+    for bagId = CONTAINER_BAGPACK_ID, NUM_BAG_SLOTS do
         for slotId = 1, GetContainerNumSlots(bagId) do
             local itemString = c:GetItemString(GetContainerItemLink(bagId, slotId));
             if itemString == neededItemString then
@@ -537,10 +542,10 @@ c.ITEM_BAG_ID = "ITEM_BAG_ID";
 function c:GetMatchingItems(slotId)
     local equipLocs, result = {}, {};
 
-    local function CreateEntry(bagId, slotId, itemString)
+    local function CreateEntry(bagId, bagSlotId, itemString)
         local newEntry = {};
         newEntry[c.ITEM_BAG_ID] = bagId;
-        newEntry[c.ITEM_SLOT_ID] = slotId;
+        newEntry[c.ITEM_SLOT_ID] = bagSlotId;
         newEntry[c.ITEM_STRING] = itemString;
         return newEntry;
     end
@@ -552,29 +557,33 @@ function c:GetMatchingItems(slotId)
     -- end
 
     -- bags
-    for bagId = 0, NUM_BAG_SLOTS do
-        for slotId = 1, GetContainerNumSlots(bagId) do
-            local itemString = c:GetItemString(GetContainerItemLink(bagId, slotId));
+    for bagId = CONTAINER_BAGPACK_ID, NUM_BAG_SLOTS do
+        for containerSlotId = 1, GetContainerNumSlots(bagId) do
+            local itemString = c:GetItemString(GetContainerItemLink(bagId, containerSlotId));
             if not c:IsEmpty(itemString) and tContains(equipLocs, c:GetItemEquipLoc(itemString)) then
-                table.insert(result, CreateEntry(bagId, slotId, itemString));
+                table.insert(result, CreateEntry(bagId, containerSlotId, itemString));
             end
         end
     end
 
     -- bank container
-    for invId = 48, 71 do
+    local minInvId, maxInvId = CONTAINER_FIRST_BANK_SLOT_ID_LEGACY, CONTAINER_LAST_BANK_SLOT_ID_LEGACY;
+    if c:IsNewApi() then
+        minInvId, maxInvId = CONTAINER_FIRST_BANK_SLOT_ID, CONTAINER_LAST_BANK_SLOT_ID;
+    end
+    for invId = minInvId, maxInvId do
         local itemString = c:GetItemString(GetInventoryItemLink("player", invId));
         if not c:IsEmpty(itemString) and tContains(equipLocs, c:GetItemEquipLoc(itemString)) then
-            table.insert(result, CreateEntry(-1, invId - 47, itemString));
+            table.insert(result, CreateEntry(BANK_CONTAINER, invId - (CONTAINER_FIRST_BANK_SLOT_ID - 1), itemString));
         end
     end
 
     -- bank bags
-    for bagId = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-        for slotId = 1, GetContainerNumSlots(bagId) do
-            local itemString = c:GetItemString(GetContainerItemLink(bagId, slotId));
+    for bagId = CONTAINER_FIRST_BANK_BAG_ID, CONTAINER_LAST_BANK_BAG_ID do
+        for containerSlotId = 1, GetContainerNumSlots(bagId) do
+            local itemString = c:GetItemString(GetContainerItemLink(bagId, containerSlotId));
             if not c:IsEmpty(itemString) and tContains(equipLocs, c:GetItemEquipLoc(itemString)) then
-                table.insert(result, CreateEntry(bagId, slotId, itemString));
+                table.insert(result, CreateEntry(bagId, containerSlotId, itemString));
             end
         end
     end
@@ -604,7 +613,7 @@ function c:CacheCurrentGearAndBags()
     };
 
     -- bags
-    for bagId = 0, NUM_BAG_SLOTS do
+    for bagId = CONTAINER_BAGPACK_ID, NUM_BAG_SLOTS do
         cache[CACHETYPE_BAGS][bagId] = cache[CACHETYPE_BAGS][bagId] or {};
 
         for slotId = 1, GetContainerNumSlots(bagId) do
@@ -1142,7 +1151,7 @@ function c:SearchSpells(spellName, maxResults)
         for spellId, spell in pairs(c:GetSpellCache()) do
             if c:StringContains(spell["name"], spellName, true) then
                 table.insert(result, spell);
-                if table.getn(result) == maxResults then
+                if getn(result) == maxResults then
                     return result, maxResults;
                 end
             end
