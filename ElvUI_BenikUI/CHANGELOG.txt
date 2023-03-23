@@ -1,6 +1,9 @@
+2.12 - Mar 23, 2023
+Fixed Aura Shadows
+Fixed the Status Menu button
+
 2.11 - Feb 25, 2023
 Follow ElvUI DT options
-Fixed the Game Menu button error
 
 2.10 - Feb 9, 2023
 Fix for the Datatext error
