@@ -119,6 +119,9 @@ function QuestieQuestFixes:Load()
         [235] = {
             [questKeys.exclusiveTo] = {742,6382,6383},
         },
+        [249] = {
+            [questKeys.startedBy] = {{313},{31},nil},
+        },
         [254] = {
             [questKeys.parentQuest] = 253,
             [questKeys.specialFlags] = 1,
@@ -543,6 +546,9 @@ function QuestieQuestFixes:Load()
             [questKeys.requiredMinRep] = {87,3000},
             [questKeys.requiredMaxRep] = {21,-5999},
         },
+        [1046] = {
+            [questKeys.objectives] = {nil,nil,{{5388,nil},{5462,nil}}},
+        },
         [1047] = {
             [questKeys.exclusiveTo] = {1015,1019},
         },
@@ -570,6 +576,7 @@ function QuestieQuestFixes:Load()
             [questKeys.triggerEnd] = {"Keep Piznik safe while he mines the mysterious ore", {[zoneIDs.STONETALON_MOUNTAINS]={{71.76, 60.22}}}},
         },
         [1097] = {
+            [questKeys.startedBy] = {{415,514},nil,nil},
             [questKeys.exclusiveTo] = {353}, -- #2364
         },
         [1100] = {
@@ -1231,8 +1238,32 @@ function QuestieQuestFixes:Load()
         [3525] = {
             [questKeys.triggerEnd] = {"Protect Belnistrasz while he performs the ritual to shut down the idol", {[zoneIDs.THE_BARRENS]={{50.86,92.87}}}},
         },
+        [3526] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+        },
         [3625] = {
             [questKeys.triggerEnd] = {"Weaponry Creation", {[zoneIDs.STRANGLETHORN_VALE]={{50.62,20.49}}}},
+        },
+        [3629] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+        },
+        [3630] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+        },
+        [3632] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+        },
+        [3633] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+        },
+        [3634] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+        },
+        [3635] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+        },
+        [3637] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
         },
         [3639] = {
             [questKeys.exclusiveTo] = {3643,3641},
@@ -1369,6 +1400,9 @@ function QuestieQuestFixes:Load()
         },
         [4144] = {
             [questKeys.specialFlags] = 1, -- #1590
+        },
+        [4181] = {
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
         },
         [4185] = {
             [questKeys.triggerEnd] = {"Advice from Lady Prestor", {[zoneIDs.STORMWIND_CITY]={{78.04,17.96}}}},
