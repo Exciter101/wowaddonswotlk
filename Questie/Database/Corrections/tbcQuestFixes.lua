@@ -185,6 +185,12 @@ function QuestieTBCQuestFixes:Load()
         [1486] = {
             [questKeys.requiredRaces] = raceIDs.NONE,
         },
+        [1506] = {
+            [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
+        },
+        [1507] = {
+            [questKeys.requiredRaces] = raceIDs.ORC + raceIDs.UNDEAD,
+        },
         [1508] = {
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
         },
@@ -956,6 +962,9 @@ function QuestieTBCQuestFixes:Load()
         },
         [9486] = {
             [questKeys.triggerEnd] = {"Tame an Elder Springpaw", {[zoneIDs.EVERSONG_WOODS]={{61.95,64.61},{64.77,59.93}}}},
+        },
+        [9487] = {
+            [questKeys.requiredRaces] = raceIDs.BLOOD_ELF,
         },
         [9489] = {
             [questKeys.requiredRaces] = raceIDs.BLOOD_ELF,
@@ -2570,6 +2579,9 @@ function QuestieTBCQuestFixes:Load()
         },
         [11131] = {
             [questKeys.triggerEnd] = {"Put Out the Fires", {[zoneIDs.DUN_MOROGH]={{53.1,51.4}},[zoneIDs.ELWYNN_FOREST]={{42,66.5}},[zoneIDs.AZUREMYST_ISLE]={{49.3,51.5}}}},
+        },
+        [11140] = {
+            [questKeys.requiredSourceItems] = {33040,33044},
         },
         [11142] = {
             [questKeys.objectives] = {nil,{{500007},{500007}}},

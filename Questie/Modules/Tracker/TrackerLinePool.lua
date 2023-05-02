@@ -38,7 +38,7 @@ local l10n = QuestieLoader:ImportModule("l10n")
 local LibDropDown = LibStub:GetLibrary("LibUIDropDownMenuQuestie-4.0")
 local LSM30 = LibStub("LibSharedMedia-3.0")
 
-local linePoolSize = 360
+local linePoolSize = 250
 local lineIndex = 0
 local buttonPoolSize = 25
 local buttonIndex = 0
@@ -182,6 +182,40 @@ function TrackerLinePool.Initialize(questFrame)
             TrackerLinePool.OnHighlightLeave(self)
             TrackerFadeTicker.OnLeave()
         end)
+
+        -- create objective complete criteria marks
+        local criteriaMark = CreateFrame("Button", nil, line)
+        criteriaMark.texture = criteriaMark:CreateTexture(nil, "OVERLAY", nil, 0)
+        criteriaMark.texture:SetWidth(Questie.db.global.trackerFontSizeObjective)
+        criteriaMark.texture:SetHeight(Questie.db.global.trackerFontSizeObjective)
+        criteriaMark.texture:SetAllPoints(criteriaMark)
+
+        criteriaMark:SetWidth(1)
+        criteriaMark:SetHeight(1)
+        criteriaMark:SetPoint("RIGHT", line.label, "LEFT", -4, 0)
+        criteriaMark:SetFrameLevel(100)
+
+        criteriaMark.SetCriteria = function(self, criteria)
+            if criteria ~= self.criteria then
+                self.criteria = criteria
+
+                if criteria == true then
+                    self.texture:SetTexture("Interface\\Addons\\Questie\\Icons\\Checkmark")
+                    --self.texture:SetAlpha(1)
+                    --else
+                    --self.texture:SetTexture("Interface\\Addons\\Questie\\Icons\\Minus")
+                    --self.texture:SetAlpha(0.5)
+                end
+
+                self:SetWidth(Questie.db.global.trackerFontSizeObjective)
+                self:SetHeight(Questie.db.global.trackerFontSizeObjective)
+            end
+        end
+
+        criteriaMark:SetCriteria(false)
+        criteriaMark:Hide()
+
+        line.criteriaMark = criteriaMark
 
         -- create expanding zone headers for quests sorted by zones
         local expandZone = CreateFrame("Button", nil, line)
@@ -359,6 +393,7 @@ function TrackerLinePool.Initialize(questFrame)
         expandQuest:Hide()
 
         line.expandQuest = expandQuest
+
         linePool[i] = line
         nextFrame = line
     end
@@ -370,8 +405,6 @@ function TrackerLinePool.Initialize(questFrame)
         local cooldown = CreateFrame("Cooldown", nil, btn, "CooldownFrameTemplate")
         btn.range = btn:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmallGray")
         btn.count = btn:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
-        btn:SetAttribute("type1", "item")
-        btn:SetAttribute("type2", "stop")
         btn:Hide()
 
         if Questie.db.global.trackerFadeQuestItemButtons then
@@ -447,20 +480,22 @@ function TrackerLinePool.Initialize(questFrame)
                 self.charges = GetItemCount(self.itemId, nil, true)
                 self.rangeTimer = -1
 
-                self:SetAttribute("item", "item:" .. tostring(self.itemId))
                 self:SetNormalTexture(validTexture)
                 self:SetPushedTexture(validTexture)
                 self:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
                 self:SetSize(size, size)
-                self:SetFrameLevel(200)
 
-                self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+                self:RegisterForClicks("anyUp")
 
                 self:SetScript("OnEvent", self.OnEvent)
                 self:SetScript("OnShow", self.OnShow)
                 self:SetScript("OnHide", self.OnHide)
                 self:SetScript("OnEnter", self.OnEnter)
                 self:SetScript("OnLeave", self.OnLeave)
+
+                self:SetAttribute("type1", "item")
+                self:SetAttribute("item1", "item:" .. self.itemId)
+                self:Show()
 
                 -- Cooldown Updates
                 cooldown:SetSize(size - 4, size - 4)
@@ -482,6 +517,9 @@ function TrackerLinePool.Initialize(questFrame)
                 self.count:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 3)
 
                 return true
+            else
+                self:SetAttribute("item1", nil)
+                self:Hide()
             end
 
             return false
@@ -608,6 +646,9 @@ function TrackerLinePool.ResetLinesForChange()
         if line.expandZone then
             line.expandZone.mode = nil
         end
+        if line.criteriaMark then
+            line.criteriaMark:Hide()
+        end
     end
 
     lineIndex = 0
@@ -628,7 +669,7 @@ end
 function TrackerLinePool.UpdateWrappedLineWidths(trackerLineWidth)
     local trackerFontSizeQuest = Questie.db.global.trackerFontSizeQuest
     local trackerMarginLeft = 10
-    local trackerMarginRight = 10
+    local trackerMarginRight = 20
     local questMarginLeft = (trackerMarginLeft + trackerMarginRight + 4) - (18 - trackerFontSizeQuest)
     local objectiveMarginLeft = questMarginLeft + trackerFontSizeQuest
     local questItemButtonSize = 12 + trackerFontSizeQuest

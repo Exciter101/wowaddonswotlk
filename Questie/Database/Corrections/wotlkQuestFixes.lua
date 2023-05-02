@@ -40,6 +40,9 @@ function QuestieWotlkQuestFixes:Load()
         [403] = {
             [questKeys.startedBy] = {nil,{269}},
         },
+        [508] = {
+            [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
+        },
         [648] = {
             [questKeys.triggerEnd] = {"Escort OOX-17/TN to safety", {[zoneIDs.TANARIS]={{61,53}}}},
         },
@@ -62,6 +65,15 @@ function QuestieWotlkQuestFixes:Load()
         },
         [1198] = {
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
+        },
+        [1252] = {
+            [questKeys.preQuestSingle] = {11123},
+        },
+        [1253] = {
+            [questKeys.preQuestSingle] = {11123},
+        },
+        [1284] = {
+            [questKeys.preQuestSingle] = {11123},
         },
         [2767] = {
             [questKeys.triggerEnd] = {"Escort OOX-22/FE to safety", {[zoneIDs.FERALAS]={{54.3,51.2}}}},
@@ -208,6 +220,9 @@ function QuestieWotlkQuestFixes:Load()
         [11120] = {
             [questKeys.startedBy] = {{24657}},
             [questKeys.finishedBy] = {{24657}},
+        },
+        [11140] = {
+            [questKeys.requiredSourceItems] = {33040,33044},
         },
         [11153] = {
             [questKeys.extraObjectives] = {{{[zoneIDs.HOWLING_FJORD]={{28.1,42.2}}}, Questie.ICON_TYPE_EVENT, l10n("Wait for Harrowmeiser's zeppelin to dock"),}},
@@ -845,6 +860,9 @@ function QuestieWotlkQuestFixes:Load()
         [12157] = {
             [questKeys.exclusiveTo] = {12171,12174,12235,12297},
         },
+        [12159] = {
+            [questKeys.objectives] = {{{26891,"Miner at Rest"}}},
+        },
         [12166] = {
             [questKeys.objectives] = {{{26616,"Blighted Elk's corpse cleansed"},{26643,"Rabid Grizzly's corpse cleansed"},},nil,nil,nil,},
         },
@@ -853,6 +871,9 @@ function QuestieWotlkQuestFixes:Load()
         },
         [12174] = {
             [questKeys.exclusiveTo] = {12235},
+        },
+        [12180] = {
+            [questKeys.preQuestSingle] = {12014},
         },
         [12181] = {
             [questKeys.exclusiveTo] = {12188},
@@ -913,13 +934,23 @@ function QuestieWotlkQuestFixes:Load()
                 {nil, Questie.ICON_TYPE_EVENT, l10n("Commandeer a Forsaken Blight Spreader"),1,{{"monster", 26523}}},
             },
         },
+        [12222] = {
+            [questKeys.preQuestSingle] = {12294},
+        },
+        [12223] = {
+            [questKeys.preQuestSingle] = {12294},
+        },
         [12224] = {
             [questKeys.preQuestGroup] = {12221,12140,12072},
+        },
+        [12227] = {
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_EVENT, l10n("Use Anderhol's Slider Cider"),0,{{"object", 188666}}}},
         },
         [12229] = {
             [questKeys.preQuestGroup] = {12207,12213},
         },
         [12231] = {
+            [questKeys.objectives] = {{{27274,"Orsonn's Story"},{27275,"Kodian's Story"}}},
             [questKeys.preQuestGroup] = {12207,12213},
         },
         [12232] = {
@@ -942,6 +973,9 @@ function QuestieWotlkQuestFixes:Load()
         [12244] = {
             [questKeys.objectives] = {{{27354}}},
             [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_EVENT, l10n("Deliver Shredder"),0,{{"monster", 27371}}}},
+        },
+        [12247] = {
+            [questKeys.objectives] = {{{27274,"Orsonn's Story"},{27275,"Kodian's Story"}}},
         },
         [12249] = {
             [questKeys.objectives] = {{{26633,}}},
@@ -1404,6 +1438,7 @@ function QuestieWotlkQuestFixes:Load()
         },
         [12683] = {
             [questKeys.objectives] = {{{28003,},{28003}}},
+            [questKeys.preQuestSingle] = {},
             [questKeys.preQuestGroup] = {12556,12558,12569},
         },
         [12685] = {
@@ -1646,14 +1681,21 @@ function QuestieWotlkQuestFixes:Load()
                 {{[zoneIDs.STORM_PEAKS]={{62.00,59.50}}}, Questie.ICON_TYPE_EVENT, l10n("Fly freed Proto-Drakes to safety while carrying rescued Brunnhildar Prisoners"),},
             },
         },
+        [12862] = {
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Talk to Ricket for transportation"), 0, {{"monster", 29428}}}},
+        },
         [12864] = {
             [questKeys.triggerEnd] = {"Locate Missing Scout",{[zoneIDs.STORM_PEAKS]={{37.68,66.75},{38.49,77.19},{31.65,64.53},{34.56,64.64},{36.43,77.3},},},},
         },
         [12865] = {
+            [questKeys.objectives] = {{{30013,"Stormcrest Eagles fed"}}},
             [questKeys.preQuestSingle] = {12863},
         },
         [12869] = {
-            [questKeys.preQuestSingle] = {12867},
+            [questKeys.preQuestSingle] = {12867,13417},
+        },
+        [12874] = {
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Talk to Fjorlin Frostbrow"), 0, {{"monster", 29732}}}},
         },
         [12876] = {
             [questKeys.preQuestSingle] = {12874},
@@ -2054,6 +2096,9 @@ function QuestieWotlkQuestFixes:Load()
         [13068] = {
             [questKeys.preQuestSingle] = {13141},
         },
+        [13071] = {
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Mount up"), 0, {{"monster", 30272}}}},
+        },
         [13073] = {
             [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Speak to Arch Druid Lilliandra for transportation to Moonglade"), 0, {{"monster", 30630}}}},
         },
@@ -2241,6 +2286,7 @@ function QuestieWotlkQuestFixes:Load()
             [questKeys.startedBy] = {{30329},nil,{43512}},
         },
         [13211] = {
+            [questKeys.preQuestSingle] = {},
             [questKeys.preQuestGroup] = {13134,13138,13140},
         },
         [13214] = {
@@ -3345,6 +3391,12 @@ function QuestieWotlkQuestFixes:Load()
             [questKeys.objectives] = {{{33972,"Rugan Steelbelly's advice"},{33272,"Charge vulnerable Charge Target"}}},
             [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Mount up"), 0, {{"monster", 33842}}}},
         },
+        [13843] = {
+            [questKeys.startedBy] = {nil,{191761}},
+            [questKeys.finishedBy] = {nil,{191761}},
+            [questKeys.preQuestSingle] = {12889},
+            [questKeys.requiredSkill] = {profKeys.ENGINEERING,400},
+        },
         [13846] = {
             [questKeys.preQuestSingle] = {13700,13701},
             [questKeys.requiredMaxRep] = {1106,42000},
@@ -3384,15 +3436,19 @@ function QuestieWotlkQuestFixes:Load()
         },
         [13861] = {
             [questKeys.preQuestSingle] = {13700},
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Mount up"), 0, {{"monster", 34125}}}},
         },
         [13862] = {
             [questKeys.preQuestSingle] = {13701},
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Mount up"), 0, {{"monster", 34125}}}},
         },
         [13863] = {
             [questKeys.preQuestSingle] = {13701},
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Mount up"), 0, {{"monster", 34125}}}},
         },
         [13864] = {
             [questKeys.preQuestSingle] = {13700},
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Mount up"), 0, {{"monster", 34125}}}},
         },
         [13887] = {
             [questKeys.preQuestSingle] = {13850},
