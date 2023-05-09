@@ -159,6 +159,7 @@ function QuestieTracker.Initialize()
 
                 if (not QuestieTracker:HasQuest()) then
                     Questie.db.global.trackerHeaderEnabled = true
+                    trackerBaseFrame:SetWidth(trackerHeaderFrame:GetWidth())
                 else
                     if Questie.db.global.currentHeaderEnabledSetting == false then
                         Questie.db.global.trackerHeaderEnabled = false
@@ -471,9 +472,11 @@ function QuestieTracker:Update()
                 -- Safety check - make sure we didn't run over our linePool limit.
                 if not line then break end
 
-                -- Set Line Mode and Zone
+                -- Set Line Mode, Types, Clickers
                 line:SetMode("zone")
                 line:SetZone(zoneName)
+                line.expandQuest:Hide()
+                line.criteriaMark:Hide()
 
                 -- Setup Zone Label
                 line.label:ClearAllPoints()
@@ -513,17 +516,14 @@ function QuestieTracker:Update()
                 trackerLineWidth = math.max(trackerLineWidth, line.label:GetUnboundedStringWidth() + trackerMarginLeft)
 
                 -- Setup Min/Max Button
-                line.expandZone:Show()
                 line.expandZone:ClearAllPoints()
-                line.expandZone:SetWidth(line:GetWidth())
-                line.expandZone:SetHeight(trackerFontSizeZone)
                 line.expandZone:SetPoint("TOPLEFT", line, "TOPLEFT", 0, 0)
-                line.expandQuest:Hide()
+                line.expandZone:SetWidth(line.label:GetWidth())
+                line.expandZone:SetHeight(line.label:GetHeight())
+                line.expandZone:Show()
 
                 -- Adds 4 pixels between Zone and first Quest Title
                 line:SetHeight(line.label:GetHeight() + 4)
-                line.label:SetHeight(line:GetHeight())
-                line.expandZone:SetHeight(line:GetHeight())
 
                 -- Set Zone states
                 line:Show()
@@ -548,6 +548,7 @@ function QuestieTracker:Update()
                 line:SetQuest(quest)
                 line:SetObjective(nil)
                 line.expandZone:Hide()
+                line.criteriaMark:Hide()
 
                 -- Set Min/Max Button and default states
                 line.expandQuest:SetPoint("TOPRIGHT", line, "TOPLEFT", questMarginLeft - 8, 1)
@@ -600,7 +601,8 @@ function QuestieTracker:Update()
                 line:SetHeight(line.label:GetHeight() + 4)
 
                 -- Adds the primary Quest Item button
-                if (complete ~= 1 and (quest.sourceItemId and GetItemSpell(quest.sourceItemId) ~= nil) or (quest.requiredSourceItems and #quest.requiredSourceItems == 1)) then
+                -- GetItemSpell(itemId) is a bit of a work around for not having a Blizzard API for checking an items IsUsable state.
+                if (complete ~= 1 and GetItemSpell(quest.sourceItemId) ~= nil and (quest.sourceItemId or (quest.requiredSourceItems and #quest.requiredSourceItems == 1))) then
                     -- Get button from buttonPool
                     local button = TrackerLinePool.GetNextItemButton()
                     if not button then break end -- stop populating the tracker
@@ -774,6 +776,7 @@ function QuestieTracker:Update()
                         line:SetQuest(quest)
                         line.expandZone:Hide()
                         line.expandQuest:Hide()
+                        line.criteriaMark:Hide()
 
                         -- Setup Timer Label
                         line.label:ClearAllPoints()
@@ -816,8 +819,11 @@ function QuestieTracker:Update()
 
                     -- Set Completion Text
                     local completionText = TrackerUtils:GetCompletionText(quest)
+
                     -- gsub removes any blank lines
-                    completionText = completionText:gsub("(.\r?\n?)\r?\n?", "%1")
+                    if completionText ~= nil then
+                        completionText = completionText:gsub("(.\r?\n?)\r?\n?", "%1")
+                    end
 
                     -- Add incomplete Quest Objectives
                     if complete == 0 then
@@ -836,6 +842,7 @@ function QuestieTracker:Update()
                                 line:SetObjective(objective)
                                 line.expandZone:Hide()
                                 line.expandQuest:Hide()
+                                line.criteriaMark:Hide()
 
                                 -- Setup Objective Label based on states. This CANNOT be combined in the secondaryButton
                                 -- check below. line.label SetPoint needs to be set BEFORE we SetText.
@@ -879,7 +886,7 @@ function QuestieTracker:Update()
                                     end
 
                                     -- Edge case where the quest is still flagged incomplete for single objectives and yet the objective itself is flagged complete
-                                elseif (objective.Completed == true and TrackerUtils:GetCompletionText(quest) ~= nil and #quest.Objectives == 1) then
+                                elseif (objective.Completed == true and completionText ~= nil and #quest.Objectives == 1) then
                                     -- Set Blizzard Completion text for single objectives
                                     line.label:SetText(QuestieLib:GetRGBForObjective({ Collected = 1, Needed = 1 }) .. completionText)
 
@@ -895,7 +902,8 @@ function QuestieTracker:Update()
                                     trackerLineWidth = math.max(trackerLineWidth, trackerMinLineWidth, line.label:GetWrappedWidth() + objectiveMarginLeft)
 
                                     -- Show the Quest turn in location on map - This needs to be called manually in certain edge cases. Doesn't hurt to call it twice.
-                                    QuestieQuest:AddFinisher(quest)
+                                    --QuestieQuest:AddFinisher(quest)
+                                    --TODO: Find another way to show Quest Finisher
                                 end
 
                                 -- Adds 1 pixel between multiple Objectives
@@ -922,13 +930,14 @@ function QuestieTracker:Update()
                         line:SetQuest(quest)
                         line.expandZone:Hide()
                         line.expandQuest:Hide()
+                        line.criteriaMark:Hide()
 
                         -- Setup Objective Label
                         line.label:ClearAllPoints()
                         line.label:SetPoint("TOPLEFT", line, "TOPLEFT", objectiveMarginLeft, 0)
 
                         -- Set Objective label based on states
-                        if (complete == 1 and TrackerUtils:GetCompletionText(quest) and #quest.Objectives == 0) then
+                        if (complete == 1 and completionText ~= nil and #quest.Objectives == 0) then
                             -- Set Blizzard Completion text for single objectives
                             line.label:SetText(QuestieLib:GetRGBForObjective({ Collected = 1, Needed = 1 }) .. completionText)
 
@@ -944,13 +953,15 @@ function QuestieTracker:Update()
                             trackerLineWidth = math.max(trackerLineWidth, trackerMinLineWidth, line.label:GetWrappedWidth() + objectiveMarginLeft)
 
                             -- Show the Quest turn in location on map - This needs to be called manually in certain edge cases. Doesn't hurt to call it twice.
-                            QuestieQuest:AddFinisher(quest)
+                            --QuestieQuest:AddFinisher(quest)
+                            --TODO: Find another way to show Quest Finisher
                         else
                             if complete == 1 then
                                 line.label:SetText(Questie:Colorize(l10n("Quest Complete") .. "!", "green"))
 
                                 -- Show the Quest turn in location on map - This needs to be called manually in certain edge cases. Doesn't hurt to call it twice.
-                                QuestieQuest:AddFinisher(quest)
+                                --QuestieQuest:AddFinisher(quest)
+                                --TODO: Find another way to show Quest Finisher
                             elseif complete == -1 then
                                 line.label:SetText(Questie:Colorize(l10n("Quest Failed") .. "!", "red"))
                             end
@@ -1018,9 +1029,11 @@ function QuestieTracker:Update()
                     -- Safety check - make sure we didn't run over our linePool limit.
                     if not line then break end
 
-                    -- Set Line Mode and Zone
+                    -- Set Line Mode, Types, Clickers
                     line:SetMode("zone")
                     line:SetZone(zoneName)
+                    line.expandQuest:Hide()
+                    line.criteriaMark:Hide()
 
                     -- Setup Zone Label
                     line.label:ClearAllPoints()
@@ -1060,17 +1073,14 @@ function QuestieTracker:Update()
                     trackerLineWidth = math.max(trackerLineWidth, line.label:GetUnboundedStringWidth() + trackerMarginLeft)
 
                     -- Setup Min/Max Button
-                    line.expandZone:Show()
                     line.expandZone:ClearAllPoints()
-                    line.expandZone:SetWidth(line.label:GetWidth())
-                    line.expandZone:SetHeight(trackerFontSizeZone)
                     line.expandZone:SetPoint("TOPLEFT", line.label, "TOPLEFT", 0, 0)
-                    line.expandQuest:Hide()
+                    line.expandZone:SetWidth(line.label:GetWidth())
+                    line.expandZone:SetHeight(line.label:GetHeight())
+                    line.expandZone:Show()
 
                     -- Adds 4 pixels between Zone and first Achievement Title
                     line:SetHeight(line.label:GetHeight() + 4)
-                    line.label:SetHeight(line:GetHeight())
-                    line.expandZone:SetHeight(line:GetHeight())
 
                     -- Set Zone states
                     line:Show()
@@ -1095,6 +1105,7 @@ function QuestieTracker:Update()
                     line:SetQuest(achieve)
                     line:SetObjective(nil)
                     line.expandZone:Hide()
+                    line.criteriaMark:Hide()
 
                     -- Set Min/Max Button and default states
                     line.expandQuest:Show()
@@ -1159,6 +1170,7 @@ function QuestieTracker:Update()
                             line:SetObjective("objective")
                             line.expandZone:Hide()
                             line.expandQuest:Hide()
+                            line.criteriaMark:Hide()
 
                             -- Setup Objective Label
                             line.label:ClearAllPoints()
@@ -1211,6 +1223,7 @@ function QuestieTracker:Update()
                                 line:SetObjective("objective")
                                 line.expandZone:Hide()
                                 line.expandQuest:Hide()
+                                line.criteriaMark:Hide()
 
                                 -- Setup Objective Label
                                 line.label:ClearAllPoints()
@@ -1277,6 +1290,7 @@ function QuestieTracker:Update()
                                         line:SetObjective("objective")
                                         line.expandZone:Hide()
                                         line.expandQuest:Hide()
+                                        line.criteriaMark:Hide()
 
                                         -- Set Objective Label
                                         line.label:ClearAllPoints()
@@ -1313,7 +1327,10 @@ function QuestieTracker:Update()
                                     -- Set Objective criteria mark
                                     if not Questie.db.global.hideCompletedAchieveObjectives and (not trackerColor or trackerColor == "white") then
                                         line.criteriaMark:SetCriteria(completed)
-                                        line.criteriaMark:Show()
+
+                                        if line.criteriaMark.mode == true then
+                                            line.criteriaMark:Show()
+                                        end
                                     end
 
                                     -- Check and measure Objective text width and update tracker width
@@ -1444,7 +1461,12 @@ function QuestieTracker:UpdateFormatting()
         QuestieTracker:UpdateWidth(trackerVarsCombined)
         TrackerLinePool.UpdateWrappedLineWidths(trackerLineWidth)
 
-        trackerQuestFrame.ScrollChildFrame:SetSize(trackerVarsCombined, (TrackerLinePool.GetFirstLine():GetTop() - TrackerLinePool.GetCurrentLine():GetBottom()))
+        if TrackerLinePool.GetCurrentLine().mode == "zone" then
+            trackerQuestFrame.ScrollChildFrame:SetSize(trackerVarsCombined, (TrackerLinePool.GetFirstLine():GetTop() - TrackerLinePool.GetCurrentLine():GetBottom()))
+        else
+            trackerQuestFrame.ScrollChildFrame:SetSize(trackerVarsCombined, (TrackerLinePool.GetFirstLine():GetTop() - TrackerLinePool.GetCurrentLine():GetBottom() + 2))
+        end
+
         trackerQuestFrame:SetWidth(trackerBaseFrame:GetWidth())
         trackerQuestFrame:SetHeight(trackerQuestFrame.ScrollChildFrame:GetHeight())
 
@@ -1463,6 +1485,7 @@ function QuestieTracker:UpdateFormatting()
             -- Manual height set by a player when using the Tracker Sizer limited by the trackers current maximum height
             if trackerBaseFrame:GetHeight() > trackerHeightByManual then
                 trackerBaseFrame:SetHeight(trackerHeightByManual)
+                trackerQuestFrame.ScrollChildFrame:SetSize(trackerVarsCombined, (TrackerLinePool.GetFirstLine():GetTop() - TrackerLinePool.GetCurrentLine():GetBottom() + 3))
 
                 -- Resize the trackerQuestFrame to match the trackerbaseFrame after the player is done resizing it
                 if Questie.db.global.trackerHeaderEnabled then
@@ -1478,6 +1501,7 @@ function QuestieTracker:UpdateFormatting()
             if trackerBaseFrame:GetHeight() > trackerHeightByRatio then
                 -- Auto height based on the trackerHeightRatio setting in Questie Config --> Tracker
                 trackerBaseFrame:SetHeight(trackerHeightByRatio)
+                trackerQuestFrame.ScrollChildFrame:SetSize(trackerVarsCombined, (TrackerLinePool.GetFirstLine():GetTop() - TrackerLinePool.GetCurrentLine():GetBottom() + 3))
 
                 -- Resize the trackerQuestFrame to match the trackerbaseFrame after the trackerHeightRatio is applied
                 if Questie.db.global.trackerHeaderEnabled then
