@@ -68,8 +68,77 @@ function TrackerBaseFrame.Initialize()
     sizer:EnableMouse(true)
     sizer:SetScript("OnMouseDown", TrackerBaseFrame.OnResizeStart)
     sizer:SetScript("OnMouseUp", TrackerBaseFrame.OnResizeStop)
-    sizer:SetScript("OnEnter", TrackerFadeTicker.OnEnter)
-    sizer:SetScript("OnLeave", TrackerFadeTicker.OnLeave)
+
+    sizer:SetScript("OnEnter", function(self)
+        if InCombatLockdown() then
+            if GameTooltip:IsShown() then
+                GameTooltip:Hide()
+                return
+            end
+        end
+
+        -- Set Sizer mode
+        local trackerSizeMode
+        if Questie.db[Questie.db.global.questieTLoc].TrackerHeight == 0 then
+            trackerSizeMode = Questie:Colorize(l10n("Auto"), "green")
+        else
+            trackerSizeMode = Questie:Colorize(l10n("Manual"), "orange")
+        end
+
+        -- Set initial tooltip
+        if not Questie.db.global.sizerHidden then
+            GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+            if IsShiftKeyDown() then
+                GameTooltip:ClearLines()
+                GameTooltip:AddLine(Questie:Colorize(l10n("Sizer Mode") .. ": ", "white") .. trackerSizeMode)
+                GameTooltip:AddLine(Questie:Colorize(l10n("Left Click + Hold") .. ": ", "gray") .. l10n("Resize Tracker (Manual)"))
+                GameTooltip:AddLine(Questie:Colorize(l10n("Right Click") .. ": ", "gray") .. l10n("Reset Sizer (Auto)"))
+                GameTooltip:AddLine(" ")
+                GameTooltip:AddLine(Questie:Colorize(l10n("Ctrl + Left Click + Hold") .. ": ", "gray") .. l10n("Resize while Locked"))
+                GameTooltip:AddLine(Questie:Colorize(l10n("Ctrl + Right Click") .. ": ", "gray") .. l10n("Reset while Locked"))
+                GameTooltip:AddLine(" ")
+                GameTooltip:AddLine(Questie:Colorize(l10n("NOTE") .. ": ", "red") .. l10n("The Tracker Height Ratio\nis ignored while in Manual mode"))
+                GameTooltip:Show()
+            else
+                GameTooltip:ClearLines()
+                GameTooltip:AddLine(Questie:Colorize(l10n("Sizer Mode") .. ": ", "white") .. trackerSizeMode)
+                GameTooltip:AddLine(Questie:Colorize("(" .. l10n("Hold Shift") .. ")", "gray"))
+                GameTooltip:Show()
+            end
+
+            -- Update tooltip
+            GameTooltip._SizerToolTip = function()
+                if IsShiftKeyDown() then
+                    GameTooltip:ClearLines()
+                    GameTooltip:AddLine(Questie:Colorize(l10n("Sizer Mode") .. ": ", "white") .. trackerSizeMode)
+                    GameTooltip:AddLine(Questie:Colorize(l10n("Left Click + Hold") .. ": ", "gray") .. l10n("Resize Tracker (Manual)"))
+                    GameTooltip:AddLine(Questie:Colorize(l10n("Right Click") .. ": ", "gray") .. l10n("Reset Sizer (Auto)"))
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(Questie:Colorize(l10n("Ctrl + Left Click + Hold") .. ": ", "gray") .. l10n("Resize while Locked"))
+                    GameTooltip:AddLine(Questie:Colorize(l10n("Ctrl + Right Click") .. ": ", "gray") .. l10n("Reset while Locked"))
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(Questie:Colorize(l10n("NOTE") .. ": ", "red") .. l10n("The Tracker Height Ratio\nis ignored while in Manual mode"))
+                    GameTooltip:Show()
+                else
+                    GameTooltip:ClearLines()
+                    GameTooltip:AddLine(Questie:Colorize(l10n("Sizer Mode") .. ": ", "white") .. trackerSizeMode)
+                    GameTooltip:AddLine(Questie:Colorize("(" .. l10n("Hold Shift") .. ")", "gray"))
+                    GameTooltip:Show()
+                end
+            end
+        end
+
+        TrackerFadeTicker.OnEnter(self)
+    end)
+
+    sizer:SetScript("OnLeave", function(self)
+        if GameTooltip:IsShown() then
+            GameTooltip:Hide()
+            GameTooltip._SizerToolTip = nil
+        end
+
+        TrackerFadeTicker.OnLeave(self)
+    end)
 
     baseFrame.sizer = sizer
 
@@ -164,9 +233,16 @@ function TrackerBaseFrame:Update()
                 if not Questie.db.global.trackerBackdropFader then
                     baseFrame:SetBackdropColor(0, 0, 0, Questie.db.global.trackerBackdropAlpha)
                     baseFrame:SetBackdropBorderColor(1, 1, 1, Questie.db.global.trackerBackdropAlpha)
+                else
+                    baseFrame:SetBackdropColor(0, 0, 0, 0)
+                    baseFrame:SetBackdropBorderColor(1, 1, 1, 0)
                 end
             else
-                baseFrame:SetBackdropColor(0, 0, 0, Questie.db.global.trackerBackdropAlpha)
+                if not Questie.db.global.trackerBackdropFader then
+                    baseFrame:SetBackdropColor(0, 0, 0, Questie.db.global.trackerBackdropAlpha)
+                else
+                    baseFrame:SetBackdropColor(0, 0, 0, 0)
+                end
                 baseFrame:SetBackdropBorderColor(1, 1, 1, 0)
             end
         else
@@ -283,6 +359,11 @@ function TrackerBaseFrame.OnDragStart(button)
         if (IsControlKeyDown() and Questie.db.global.trackerLocked and not ChatEdit_GetActiveWindow()) or not Questie.db.global.trackerLocked then
             dragButton = button
             baseFrame:StartMoving()
+
+            if GameTooltip:IsShown() then
+                GameTooltip:Hide()
+            end
+
             TrackerBaseFrame:Update()
         else
             -- Turns off mouse looking to prevent frame from becoming stuck to the pointer
@@ -338,6 +419,10 @@ end
 function TrackerBaseFrame.OnResizeStart(_, button)
     Questie:Debug(Questie.DEBUG_DEVELOP, "[TrackerBaseFrame:OnResizeStart]", button)
 
+    if GameTooltip:IsShown() then
+        GameTooltip:Hide()
+    end
+
     if InCombatLockdown() or (not baseFrame:IsResizable()) then
         return
     end
@@ -360,13 +445,20 @@ function TrackerBaseFrame.OnResizeStart(_, button)
                     baseFrame:SetPoint(QuestieTrackerLoc[1], QuestieTrackerLoc[2], QuestieTrackerLoc[3], QuestieTrackerLoc[4], QuestieTrackerLoc[5])
                     ------------------------------------------------------------------------------
 
-                    QuestieTracker:Update()
+                    -- This switches ON the Tracker Background and Border and switches OFF
+                    -- the Tracker Fader to make it easier to see the Trackers boundaries.
+                    Questie.db.global.trackerBackdropEnabled = true
+                    Questie.db.global.trackerBorderEnabled = true
+                    Questie.db.global.trackerBackdropFader = false
+                    ------------------------------------------------------------------------------
 
                     if QuestieTrackerLoc and (QuestieTrackerLoc[1] == "BOTTOMLEFT" or QuestieTrackerLoc[1] == "BOTTOMRIGHT") then
                         baseFrame:StartSizing("TOPRIGHT")
                     else
                         baseFrame:StartSizing("BOTTOMRIGHT")
                     end
+
+                    QuestieTracker:Update()
                 end)
             end
         end
@@ -380,7 +472,7 @@ end
 function TrackerBaseFrame.OnResizeStop(_, button)
     Questie:Debug(Questie.DEBUG_DEVELOP, "[TrackerBaseFrame:OnResizeStop]", button)
 
-    if button == "RightButton" or TrackerBaseFrame.isSizing ~= true then
+    if button == "RightButton" and TrackerBaseFrame.isSizing ~= true then
         QuestieCombatQueue:Queue(function()
             QuestieTracker:Update()
         end)
@@ -388,7 +480,17 @@ function TrackerBaseFrame.OnResizeStop(_, button)
     end
 
     TrackerBaseFrame.isSizing = false
+    -- This returns the players desired Background, Border and Fader to the correct setting
+    Questie.db.global.trackerBackdropEnabled = Questie.db.global.currentBackdropEnabled
+    Questie.db.global.trackerBorderEnabled = Questie.db.global.currentBorderEnabled
+    Questie.db.global.trackerBackdropFader = Questie.db.global.currentBackdropFader
+
     baseFrame:StopMovingOrSizing()
     QuestieCombatQueue:Queue(_UpdateTrackerPosition)
     updateTimer:Cancel()
+    C_Timer.After(0.05, function()
+        QuestieCombatQueue:Queue(function()
+            QuestieTracker:Update()
+        end)
+    end)
 end

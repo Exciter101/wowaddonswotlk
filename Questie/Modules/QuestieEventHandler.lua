@@ -117,13 +117,14 @@ function QuestieEventHandler:RegisterLateEvents()
             end)
         end)
 
+        --[[ TODO: This fires FAR too often. Until Blizzard figures out a way to allow us to trigger achievement updates this needs to remain disabled for now.
         Questie:RegisterEvent("CRITERIA_UPDATE", function()
             Questie:Debug(Questie.DEBUG_DEVELOP, "[EVENT] CRITERIA_UPDATE")
             QuestieCombatQueue:Queue(function()
                 QuestieTracker:Update()
             end)
         end)
-
+        --]]
         -- Money based Achievement updates
         Questie:RegisterEvent("CHAT_MSG_MONEY", function()
             Questie:Debug(Questie.DEBUG_DEVELOP, "[EVENT] CHAT_MSG_MONEY")
@@ -278,13 +279,11 @@ function _EventHandler:MapExplorationUpdated()
     end
 
     -- Exploratory based Achievement updates
-    --[[
     if Questie.IsWotlk then
         QuestieCombatQueue:Queue(function()
             QuestieTracker:Update()
         end)
     end
-    --]]
 end
 
 --- Fires when the player levels up
@@ -311,6 +310,15 @@ function _EventHandler:ModifierStateChanged()
         GameTooltip:ClearLines()
         GameTooltip:SetOwner(GameTooltip._owner, "ANCHOR_CURSOR")
         GameTooltip:_Rebuild() -- rebuild the tooltip
+        GameTooltip:SetFrameStrata("TOOLTIP")
+        GameTooltip:Show()
+    end
+
+    if GameTooltip and GameTooltip:IsShown() and GameTooltip._SizerToolTip then
+        GameTooltip:Hide()
+        GameTooltip:ClearLines()
+        GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+        GameTooltip._SizerToolTip()
         GameTooltip:SetFrameStrata("TOOLTIP")
         GameTooltip:Show()
     end

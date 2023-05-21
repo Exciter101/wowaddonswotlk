@@ -140,7 +140,7 @@ local migrationFunctions = {
     [13] = function()
         Questie.db[Questie.db.global.questieTLoc].TrackerLocation = nil
     end,
-    [14] = function ()
+    [14] = function()
         -- Empty on purpose
     end,
     [15] = function()
@@ -172,27 +172,25 @@ local migrationFunctions = {
             Questie.db.char.enableQuestFrameIcons = true
         end
     end,
-    [19] = function ()
+    [19] = function()
         Questie.db.global.ICON_REPEATABLE_COMPLETE = Questie.icons["complete"]
         Questie.db.global.ICON_EVENTQUEST_COMPLETE = Questie.icons["complete"]
         Questie.db.global.ICON_PVPQUEST_COMPLETE = Questie.icons["complete"]
     end,
     [20] = function()
-        Questie.db.char.isAchievementsExpanded = nil
-
-        if Questie.db.global.trackerEnabled then   -- old value
-            Questie.db.global.trackerEnabled = nil -- kill old value
-            Questie.db.char.trackerEnabled = true  -- create new value
+        if Questie.db.global.trackerEnabled then                                    -- old value
+            Questie.db.global.trackerEnabled = nil                                  -- kill old value
+            Questie.db.char.trackerEnabled = true                                   -- create new value
         end
         if Questie.db[Questie.db.global.questieTLoc].trackerSetpoint == "AUTO" then -- old default value
             Questie.db[Questie.db.global.questieTLoc].trackerSetpoint = "TOPLEFT"
         end
         if Questie.db.global.trackerHeaderAutoMove == false then
-            Questie.db.global.trackerHeaderAutoMove = nil -- kill old key
-            Questie.db.global.autoMoveHeader = false      -- migrate previous setting to new key
+            Questie.db.global.trackerHeaderAutoMove = nil               -- kill old key
+            Questie.db.global.autoMoveHeader = false                    -- migrate previous setting to new key
         end
-        if Questie.db.global.sizerHidden == nil then -- new option
-            Questie.db.global.sizerHidden = false    -- set default
+        if Questie.db.global.sizerHidden == nil then                    -- new option
+            Questie.db.global.sizerHidden = false                       -- set default
         end
         if Questie.db.global.hideCompletedQuestObjectives == nil then   -- new option
             Questie.db.global.hideCompletedQuestObjectives = false      -- set default
@@ -201,10 +199,10 @@ local migrationFunctions = {
             Questie.db.global.hideCompletedAchieveObjectives = false    -- set default
         end
         if Questie.db.global.currentHeaderEnabledSetting == nil then    -- new option
-            Questie.db.global.currentHeaderEnabledSetting = false       -- set default
+            Questie.db.global.currentHeaderEnabledSetting = true        -- set trackerHeaderEnabled default
         end
     end,
-    [21] = function ()
+    [21] = function()
         if Questie.db.char.soundOnQuestComplete == nil then -- new option
             Questie.db.char.soundOnQuestComplete = false
         end
@@ -212,8 +210,19 @@ local migrationFunctions = {
             Questie.db.char.soundOnObjectiveComplete = false
         end
     end,
-    [22] = function ()
+    [22] = function()
         Questie.db.global.hideCompletedAchieveObjectives = true
+    end,
+    [23] = function()
+        if Questie.db.global.currentBackdropEnabled == nil then                                 -- new option
+            Questie.db.global.currentBackdropEnabled = Questie.db.global.trackerBackdropEnabled -- set trackerBackdropEnabled default
+        end
+        if Questie.db.global.currentBorderEnabled == nil then                                   -- new option
+            Questie.db.global.currentBorderEnabled = Questie.db.global.trackerBorderEnabled     -- set trackerBorderEnabled default
+        end
+        if Questie.db.global.currentBackdropFader == nil then                                   -- new option
+            Questie.db.global.currentBackdropFader = Questie.db.global.trackerBackdropFader     -- set trackerBackdropFader default
+        end
     end
 }
 

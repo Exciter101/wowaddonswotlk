@@ -78,6 +78,9 @@ function QuestieTBCQuestFixes:Load()
         [503] = {
             [questKeys.triggerEnd] = {"Find where Gol'dir is being held", {[zoneIDs.ALTERAC_VALLEY]={{60.58,43.86}}}},
         },
+        [504] = {
+            [questKeys.objectivesText] = {"Slay 10 Crushridge Warmongers, then return to Marshal Redpath in Southshore."},
+        },
         [558] = {
             [questKeys.questLevel] = -1,
         },
@@ -950,6 +953,10 @@ function QuestieTBCQuestFixes:Load()
         [9460] = {
             [questKeys.requiredRaces] = raceIDs.BLOOD_ELF,
             [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_LOOT, l10n("Pickpocket the Lacy Handkerchief from the Sentinel Leader"), 0, {{"monster", 17210}}}},
+        },
+        [9467] = {
+            [questKeys.sourceItemId] = 24335,
+            [questKeys.requiredSourceItems] = {23682,24335},
         },
         [9472] = {
             [questKeys.requiredSourceItems] = {29112},

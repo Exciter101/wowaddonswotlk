@@ -408,10 +408,10 @@ function QuestieQuest:AcceptQuest(questId)
         Questie:Debug(Questie.DEBUG_INFO, "[QuestieQuest] Accepted Quest:", questId, " Warning: Quest was once accepted. IsComplete = ", complete)
         if Questie.db.char.AutoUntrackedQuests[questId] then
             Questie.db.char.AutoUntrackedQuests[questId] = nil
-            QuestieCombatQueue:Queue(function()
-                QuestieTracker:Update()
-            end)
         end
+        QuestieCombatQueue:Queue(function()
+            QuestieTracker:Update()
+        end)
     else
         Questie:Debug(Questie.DEBUG_INFO, "[QuestieQuest] Accepted Quest:", questId, " Warning: Quest already existed, not adding")
     end
@@ -533,7 +533,9 @@ function QuestieQuest:UpdateQuest(questId)
                     end
                 end
             end
-        elseif isComplete == 0 and quest.WasComplete then -- Quest was somehow reset back to incomplete after being completed. Player destroyed quest drops?
+
+            -- Quest was somehow reset back to incomplete after being completed. Player destroyed quest drops?
+        elseif isComplete == 0 and quest.WasComplete then
             Questie:Debug(Questie.DEBUG_DEVELOP, "[QuestieQuest:UpdateQuest] Quest has been reset to not complete?")
 
             -- Reset quest objectives
@@ -1457,7 +1459,7 @@ do
                                 ---@type Quest
                                 local quest = QuestieDB:GetQuest(questId)
                                 if (not quest.tagInfoWasCached) then
-                                    Questie:Debug(Questie.DEBUG_SPAM, "Caching tag info for quest", questId)
+                                    --Questie:Debug(Questie.DEBUG_SPAM, "Caching tag info for quest", questId)
                                     QuestieDB.GetQuestTagInfo(questId) -- cache to load in the tooltip
                                     quest.tagInfoWasCached = true
                                 end
