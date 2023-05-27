@@ -87,7 +87,8 @@ function TrackerBaseFrame.Initialize()
 
         -- Set initial tooltip
         if not Questie.db.global.sizerHidden then
-            GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+            GameTooltip._owner = self
+            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
             if IsShiftKeyDown() then
                 GameTooltip:ClearLines()
                 GameTooltip:AddLine(Questie:Colorize(l10n("Sizer Mode") .. ": ", "white") .. trackerSizeMode)
@@ -423,7 +424,7 @@ function TrackerBaseFrame.OnResizeStart(_, button)
         GameTooltip:Hide()
     end
 
-    if InCombatLockdown() or (not baseFrame:IsResizable()) then
+    if InCombatLockdown() or (not baseFrame:IsResizable()) or IsShiftKeyDown() or IsAltKeyDown() then
         return
     end
 
@@ -434,7 +435,7 @@ function TrackerBaseFrame.OnResizeStart(_, button)
 
                 local QuestieTrackerLoc = Questie.db[Questie.db.global.questieTLoc].TrackerLocation
 
-                updateTimer = C_Timer.NewTicker(0.1, function()
+                updateTimer = C_Timer.NewTicker(0.12, function()
                     Questie.db[Questie.db.global.questieTLoc].TrackerWidth = baseFrame:GetWidth()
                     Questie.db[Questie.db.global.questieTLoc].TrackerHeight = baseFrame:GetHeight()
 
@@ -444,14 +445,12 @@ function TrackerBaseFrame.OnResizeStart(_, button)
                     baseFrame:ClearAllPoints()
                     baseFrame:SetPoint(QuestieTrackerLoc[1], QuestieTrackerLoc[2], QuestieTrackerLoc[3], QuestieTrackerLoc[4], QuestieTrackerLoc[5])
                     ------------------------------------------------------------------------------
-
                     -- This switches ON the Tracker Background and Border and switches OFF
                     -- the Tracker Fader to make it easier to see the Trackers boundaries.
                     Questie.db.global.trackerBackdropEnabled = true
                     Questie.db.global.trackerBorderEnabled = true
                     Questie.db.global.trackerBackdropFader = false
                     ------------------------------------------------------------------------------
-
                     if QuestieTrackerLoc and (QuestieTrackerLoc[1] == "BOTTOMLEFT" or QuestieTrackerLoc[1] == "BOTTOMRIGHT") then
                         baseFrame:StartSizing("TOPRIGHT")
                     else
@@ -472,11 +471,18 @@ end
 function TrackerBaseFrame.OnResizeStop(_, button)
     Questie:Debug(Questie.DEBUG_DEVELOP, "[TrackerBaseFrame:OnResizeStop]", button)
 
-    if button == "RightButton" and TrackerBaseFrame.isSizing ~= true then
-        QuestieCombatQueue:Queue(function()
-            QuestieTracker:Update()
-        end)
-        return
+
+    if TrackerBaseFrame.isSizing ~= true then
+        if button == "RightButton" then
+            QuestieCombatQueue:Queue(function()
+                QuestieTracker:Update()
+            end)
+            return
+        end
+
+        if button == "LeftButton" then
+            return
+        end
     end
 
     TrackerBaseFrame.isSizing = false
