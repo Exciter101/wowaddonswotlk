@@ -60,7 +60,7 @@ function ElvUI_EltreumUI:PLAYER_ENTERING_WORLD(_, initLogin)
 	ElvUI_EltreumUI:FriendlyNameplates() -- controls hiding healthbar from friendly nameplates inside instances
 	ElvUI_EltreumUI:ShamanTextureMode() -- applies the dark color to shaman powers in TBC/Classic
 	ElvUI_EltreumUI:Anchors() --creates anchors for error frame and weakaura that can be used to attack weakauras to elvui's unitframe visibility settings
-	ElvUI_EltreumUI:ChatRoleSwapIcons() --adds custom role icons in chat when swapping roles
+	ElvUI_EltreumUI:UnitframeRoleIcons() --adds custom role icons in chat when swapping roles
 	ElvUI_EltreumUI:DynamicChatFade() --adds chat fade/hide functions
 	ElvUI_EltreumUI:LootText() -- gets the combat text going if not enabled
 	ElvUI_EltreumUI:StealthOptions() --adds an overlay when in stealth
@@ -76,7 +76,7 @@ function ElvUI_EltreumUI:PLAYER_ENTERING_WORLD(_, initLogin)
 	ElvUI_EltreumUI:SkinQuests() --skins quest objective frame to be class colored
 	ElvUI_EltreumUI:ExpandedCharacterStats() --attempt at improving the character panel
 	ElvUI_EltreumUI:DeathSound() -- set the party/raid death sound
-	ElvUI_EltreumUI.PlayerDeathAnimation() -- death animation
+	ElvUI_EltreumUI:PlayerDeathAnimation() -- death animation
 	ElvUI_EltreumUI:DeleteItem() -- automatically type delete
 	ElvUI_EltreumUI:SkillGlow() --makes skill glow using libcustomglow
 	ElvUI_EltreumUI:BattleRes() --bres count/cd

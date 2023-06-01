@@ -1332,6 +1332,7 @@ P.ElvUI_EltreumUI = {
 		eltruismroleiconscustomhealer = "",
 		eltruismroleiconscustomdps = "",
 		roleiconstype = 'ELTRUISM',
+		eltruismroleiconsdisabledps = false,
 
 		eltruismleadericons = false,
 		leadericonstype = "1",
@@ -1417,6 +1418,7 @@ P.ElvUI_EltreumUI = {
 		bagscale = 1,
 		bankscale = 1,
 		lootscale = 1,
+		mirrorscale = 1,
 		colorbg = false,
 		musicshuffle = false,
 		datatextteleport = "Hearthstone",

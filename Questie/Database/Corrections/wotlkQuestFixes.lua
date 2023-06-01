@@ -552,6 +552,7 @@ function QuestieWotlkQuestFixes:Load()
             [questKeys.startedBy] = {nil,{187674},{34777}},
         },
         [11652] = {
+            [questKeys.objectives] = {nil,nil,nil,nil,{{{25332,25333,25469,},25333,"Scourge Unit obliterated"},{{27106,27107,27108,27110},27106,"Injured Warsong Soldier rescued"}}},
             [questKeys.triggerEnd] = {"Scourge Leader identified",{[zoneIDs.BOREAN_TUNDRA]={{36.41,63.52,},},},},
         },
         [11653] = {
@@ -668,6 +669,9 @@ function QuestieWotlkQuestFixes:Load()
             [questKeys.objectives] = {{{25814,"Gnome soul captured"},},nil,nil,nil,},
             [questKeys.preQuestSingle] = {11895},
         },
+        [11905] = {
+            [questKeys.extraObjectives] = {{{[zoneIDs.THE_NEXUS]={{64.9,21.6}}}, Questie.ICON_TYPE_EVENT, l10n("Use Interdimensional Refabricator")}},
+        },
         [11906] = {
             [questKeys.preQuestSingle] = {11895},
         },
@@ -693,6 +697,9 @@ function QuestieWotlkQuestFixes:Load()
         },
         [11938] = {
             [questKeys.objectives] = {nil,nil,nil,nil,{{{25378,25383,25386,25387,25393,25609},25378,"En'kilah Casualty"}}},
+        },
+        [11940] = {
+            [questKeys.objectives] = {{{26127,"Captured Nexus Drake"},},nil,nil,nil,},
         },
         [11945] = {
             [questKeys.reputationReward] = {{1073,500}},
@@ -1237,6 +1244,9 @@ function QuestieWotlkQuestFixes:Load()
         },
         [12473] = {
             [questKeys.triggerEnd] = {"Thel'zan the Duskbringer Defeated",{[zoneIDs.DRAGONBLIGHT]={{81.11,50.64,},},},},
+        },
+        [12478] = {
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_EVENT, l10n("Use Zelig's Scrying Orb"),0,{{"object", 190191}}},},
         },
         [12481] = {
             [questKeys.objectives] = {{{24238,"Bjorn Halgurdsson insulted"},{24238,"Bjorn Halgurdsson defeated"}}},

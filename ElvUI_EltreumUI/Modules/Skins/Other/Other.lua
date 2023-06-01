@@ -133,6 +133,8 @@ function S:HandleMirrorTimer() --(timer, value, maxvalue, scale, paused, label)
 				frame.Text:ClearAllPoints()
 				frame.Text:SetParent(frame.StatusBar)
 				frame.Text:SetPoint('CENTER', frame.StatusBar, 0, 1)
+
+				frame:SetScale(E.db.ElvUI_EltreumUI.otherstuff.mirrorscale)
 			end
 
 			if E.db.ElvUI_EltreumUI.unitframes.gradientmode.enable then
@@ -689,6 +691,33 @@ function ElvUI_EltreumUI:SkinMailZone()
 				end
 			end
 		end
+	end
+end
+
+--hide talking head
+local EltruismHideTalkingHead = CreateFrame('Frame', "EltruismHideTalkingHeadFrame")
+EltruismHideTalkingHead:RegisterEvent('PLAYER_ENTERING_WORLD')
+EltruismHideTalkingHead:RegisterEvent('ADDON_LOADED')
+function ElvUI_EltreumUI:EltruismHideTalkingHead()
+	if E.db.ElvUI_EltreumUI.skins.hidetalkinghead then
+		EltruismHideTalkingHead:SetScript('OnEvent', function(_, event)
+			if event == 'PLAYER_ENTERING_WORLD' or event == 'ADDON_LOADED' or IsAddOnLoaded("Blizzard_TalkingHeadUI") then
+				if E.Retail then
+					local TalkingHeadFrame = _G.TalkingHeadFrame
+					if TalkingHeadFrame then
+						hooksecurefunc(_G["TalkingHeadFrame"], "PlayCurrent", function()
+							TalkingHeadFrame:Hide()
+						end)
+						hooksecurefunc(_G["TalkingHeadFrame"], "Reset", function()
+							TalkingHeadFrame:Hide()
+						end)
+						EltruismHideTalkingHead:UnregisterAllEvents()
+					end
+				else
+					EltruismHideTalkingHead:UnregisterAllEvents()
+				end
+			end
+		end)
 	end
 end
 
