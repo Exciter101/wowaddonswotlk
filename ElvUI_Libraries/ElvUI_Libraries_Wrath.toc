@@ -5,8 +5,5 @@
 ## Interface: 30401
 ## OptionalDeps: LibHealComm-4.0
 ## X-oUF: ElvUF
-## X-Tukui-ProjectID: -2
-## X-Tukui-ProjectFolders: ElvUI, ElvUI_Libraries, ElvUI_Options
 
 Wrath\Libs.xml
-
