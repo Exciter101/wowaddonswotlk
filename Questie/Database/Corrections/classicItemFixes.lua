@@ -29,7 +29,9 @@ function QuestieItemFixes:Load()
         },
         [1262] = {
             [itemKeys.relatedQuests] = {116,117},
-            [itemKeys.npcDrops] = {239},
+            [itemKeys.vendors] = {239},
+            [itemKeys.class] = 12,
+            [itemKeys.name] = 'Keg of Thunderbrew',
         },
         [1524] = {
             [itemKeys.npcDrops] = {667,669,670,672,696,780,781,782,783,784,1059,1061,1062},
@@ -75,6 +77,12 @@ function QuestieItemFixes:Load()
         },
         [2633] = {
             [itemKeys.npcDrops] = {940,941,942}, -- #2433
+        },
+        [2659] = {
+            [itemKeys.objectDrops] = {333},
+        },
+        [2661] = {
+            [itemKeys.objectDrops] = {333},
         },
         [2665] = {
             [itemKeys.relatedQuests] = {90},
@@ -404,6 +412,9 @@ function QuestieItemFixes:Load()
             [itemKeys.npcDrops] = {},
             [itemKeys.objectDrops] = {20806},
         },
+        [5880] = {
+            [itemKeys.class] = 12,
+        },
         [5942] = {
             [itemKeys.npcDrops] = {4405,4401,4404,4402,4403,14236},
         },
@@ -494,6 +505,9 @@ function QuestieItemFixes:Load()
             [itemKeys.npcDrops] = {},
             [itemKeys.objectDrops] = {},
         },
+        [7297] = {
+            [itemKeys.class] = 12,
+        },
         [7628] = {
             [itemKeys.relatedQuests] = {8},
             [itemKeys.npcDrops] = {},
@@ -578,6 +592,9 @@ function QuestieItemFixes:Load()
             [itemKeys.npcDrops] = {},
             [itemKeys.objectDrops] = {},
         },
+        [9284] = {
+            [itemKeys.npcDrops] = {6213,6329},
+        },
         [9306] = { -- #1487
             [itemKeys.relatedQuests] = {2879,2942},
             [itemKeys.npcDrops] = {},
@@ -587,6 +604,9 @@ function QuestieItemFixes:Load()
             [itemKeys.relatedQuests] = {2944},
             [itemKeys.npcDrops] = {7977},
             [itemKeys.objectDrops] = {},
+        },
+        [9365] = {
+            [itemKeys.npcDrops] = {6218,6219,6220},
         },
         [9438] = {
             [itemKeys.relatedQuests] = {654},

@@ -32,6 +32,12 @@ function QuestieWotlkQuestFixes:Load()
     local specKeys = QuestieProfessions.specializationKeys
 
     return {
+        [55] = {
+            [questKeys.objectives] = {{{1200}}},
+        },
+        [75] = {
+            [questKeys.specialFlags] = 0,
+        },
         [171] = {
             [questKeys.startedBy] = {{14305},nil,nil},
             [questKeys.questLevel] = -1,
@@ -299,6 +305,9 @@ function QuestieWotlkQuestFixes:Load()
         [11120] = {
             [questKeys.startedBy] = {{24657}},
             [questKeys.finishedBy] = {{24657}},
+        },
+        [11137] = {
+            [questKeys.preQuestSingle] = {},
         },
         [11140] = {
             [questKeys.requiredSourceItems] = {33040,33044},
@@ -1073,6 +1082,9 @@ function QuestieWotlkQuestFixes:Load()
         [12249] = {
             [questKeys.objectives] = {{{26633,}}},
             [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Talk to Tur Ragepaw to summon Ursoc"),0,{{"monster", 27328}}}},
+        },
+        [12255] = {
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Ride Flamebringer"),0,{{"monster", 27292}}}},
         },
         [12256] = {
             [questKeys.preQuestSingle] = {12468},
@@ -2887,6 +2899,8 @@ function QuestieWotlkQuestFixes:Load()
         },
         [13406] = {
             [questKeys.preQuestSingle] = {13373},
+            [questKeys.objectives] = {{{32769},{32771}},nil,nil,nil,{{{32770,32772},32770}}},
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Talk to Rizzy Ratchwiggle"), 1, {{"monster", 31839}}}},
         },
         [13407] = {
             [questKeys.triggerEnd] = {"Victory in Strand of the Ancients", {
